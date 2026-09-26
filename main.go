@@ -1,29 +1,29 @@
-package cmd
+package main
 
 import (
 	"fmt"
-	"net"
+	"net/http"
+
+	"github.com/munnaMia/r8Conn/internal/network"
 )
 
-func GetLocalIP() (string, error) {
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err != nil {
-		return "", err
-	}
-
-	defer conn.Close()
-
-	localAddr := conn.LocalAddr().(*net.UDPAddr).String()
-
-	return localAddr, nil
-}
-
 func main() {
-	ip, err := GetLocalIP()
+	ip, err := network.GetLocalIP()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	fmt.Println(ip)
+
+	fmt.Println("starting an http server")
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello men..."))
+	})
+	err = http.ListenAndServe(":8080", nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
