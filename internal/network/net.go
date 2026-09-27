@@ -30,7 +30,7 @@ func GetLocalIP() (string, error) {
 // }
 
 // check the port is available for use or not
-func IsLocalPortAvailable(port int) (bool, error) {
+func PortAvailable(port int) (bool, error) {
 	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
 		return false, fmt.Errorf("port is not available. %w", err)
@@ -40,7 +40,40 @@ func IsLocalPortAvailable(port int) (bool, error) {
 	return true, nil
 }
 
-// // check the local IP is available for use or not
-// func IsLocalIPAvailable(ip string) (bool, error) {
-// 	return false, nil
-// }
+// check the local IP is available for use or not
+func ValidateIP(ip string) error {
+	netIp := net.ParseIP(ip)
+	if netIp == nil {
+		return fmt.Errorf("provided IP is not a valid IP address")
+	}
+
+	if netIp.IsLoopback() {
+		return fmt.Errorf("loopback ip is not allowed. %s", netIp.String())
+	}
+
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		return fmt.Errorf("failed to fetch all the interfaces on local matchine. %w", err)
+	}
+
+	for _, iface := range interfaces {
+		addrs, err := iface.Addrs()
+		if err != nil {
+			return fmt.Errorf("failed to retriving address for interface %s : %w", iface.Name, err)
+		}
+
+		for _, addr := range addrs {
+			ipNet, ok := addr.(*net.IPNet)
+			if !ok {
+				continue
+			}
+
+			if ipNet.IP.Equal(netIp) {
+				return nil
+			}
+		}
+
+	}
+
+	return fmt.Errorf("IP address %s is not assigned to this machine", ip)
+}
