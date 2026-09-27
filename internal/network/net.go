@@ -24,22 +24,6 @@ func GetLocalIP() (string, error) {
 	return ip, nil
 }
 
-// // GetPortAddr find a available port and return it.
-// func GetPortAddr() string {
-// 	return ""
-// }
-
-// check the port is available for use or not
-func PortAvailable(port int) (bool, error) {
-	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
-	if err != nil {
-		return false, fmt.Errorf("port is not available. %w", err)
-	}
-	defer ln.Close()
-
-	return true, nil
-}
-
 // check the local IP is available for use or not
 func ValidateIP(ip string) error {
 	netIp := net.ParseIP(ip)
@@ -76,4 +60,29 @@ func ValidateIP(ip string) error {
 	}
 
 	return fmt.Errorf("IP address %s is not assigned to this machine", ip)
+}
+
+// GetPortAddr find a available port and return it or check a given port is available or not.
+func GetPort(port int) (string, error) {
+	if port != 0 {
+		err := IsPortAvailable(port)
+		if err != nil {
+			return "", err
+		}
+		return ":" + strconv.Itoa(port), nil
+	}
+
+	// do a tcp req for port :0 to find a port...
+	return
+}
+
+// check the given port is available for use or not
+func IsPortAvailable(port int) error {
+	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
+	if err != nil {
+		return fmt.Errorf("port :%d is not available. %w", port, err)
+	}
+	defer ln.Close()
+
+	return nil
 }
