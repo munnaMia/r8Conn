@@ -1,7 +1,9 @@
 package network
 
 import (
+	"fmt"
 	"net"
+	"strconv"
 	"strings"
 )
 
@@ -21,3 +23,24 @@ func GetLocalIP() (string, error) {
 
 	return ip, nil
 }
+
+// // GetPortAddr find a available port and return it.
+// func GetPortAddr() string {
+// 	return ""
+// }
+
+// check the port is available for use or not
+func IsLocalPortAvailable(port int) (bool, error) {
+	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
+	if err != nil {
+		return false, fmt.Errorf("port is not available. %w", err)
+	}
+	defer ln.Close()
+
+	return true, nil
+}
+
+// // check the local IP is available for use or not
+// func IsLocalIPAvailable(ip string) (bool, error) {
+// 	return false, nil
+// }

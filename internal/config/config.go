@@ -10,7 +10,7 @@ type Config struct {
 // NewConfig return an instance of config struct with some default values
 func NewConfig() *Config {
 	return &Config{
-		Port:     8080,
+		Port:     0,
 		Headless: false,
 		ShareDir: ".",
 	}
