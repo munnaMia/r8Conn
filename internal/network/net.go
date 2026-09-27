@@ -73,7 +73,14 @@ func GetPort(port int) (string, error) {
 	}
 
 	// do a tcp req for port :0 to find a port...
-	return
+	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
+	if err != nil {
+		return "", fmt.Errorf("failed to established a connection on port %d. %w", port, err)
+	}
+	defer ln.Close()
+
+	p := ln.Addr().(*net.TCPAddr).Port
+	return ":" + strconv.Itoa(p), nil
 }
 
 // check the given port is available for use or not
