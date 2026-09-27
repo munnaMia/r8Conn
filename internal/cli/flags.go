@@ -7,7 +7,7 @@ import (
 )
 
 func ParseFlags(cfg *config.Config) {
-	flag.IntVar(&cfg.Port, "p", 0, "Port to run the http fileserver")
+	flag.IntVar(&cfg.Port, "p", cfg.Port, "Port to run the http fileserver")
 	flag.StringVar(&cfg.PreferredIP, "ip", "", "Manually specify the local IP address")
 	flag.StringVar(&cfg.ShareDir, "sd", cfg.PreferredIP, "Directory path to serve the files to share")
 	flag.BoolVar(&cfg.Headless, "hl", cfg.Headless, "Run in Headless TUI/CLI mode without GUI")
