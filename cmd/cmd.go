@@ -5,6 +5,7 @@ import (
 
 	"github.com/munnaMia/r8Conn/internal/cli"
 	"github.com/munnaMia/r8Conn/internal/config"
+	"github.com/munnaMia/r8Conn/internal/network"
 	"github.com/munnaMia/r8Conn/internal/server"
 	"github.com/munnaMia/r8Conn/internal/server/handler"
 	"github.com/munnaMia/r8Conn/util/logger"
@@ -21,12 +22,30 @@ func Run() {
 	// initialze cli flags
 	cli.ParseFlags(cfg)
 
+	// fetch the ip and port
+	err := network.InitializeAddr(cfg)
+	if err != nil {
+		slog.Error("failed to initialized network ip and port", "error", err)
+		return
+	}
+
 	// initialized a new application handler
 	h := handler.NewHandler()
 
 	// setup a new http server for application
-	server := server.NewServer(h, ":8080")
+	addr := network.FormatBindPort(cfg.Port)
 
-	// start the http server
-	server.Start()
+	server := server.NewServer(h, addr)
+
+	if cfg.Headless {
+		// run the CLI mode
+		slog.Info("start the cli mode of r8Conn")
+
+		// start the http server on a separate go routine
+		server.Start()
+
+	} else {
+		// run the GUI mode
+	}
+
 }
