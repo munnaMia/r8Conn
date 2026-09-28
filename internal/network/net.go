@@ -9,28 +9,41 @@ import (
 	"github.com/munnaMia/r8Conn/internal/config"
 )
 
-// validate user provided ip & port or if user doesn't provide one bring a valided ip and port from system and return.
-func GetAddr(cfg *config.Config) (string, error) {
-	var ip string
+// check user provided ip and port are valid or not and return error. if configuration hold default values then it assing ip and port on it
+func InitializeAddr(cfg *config.Config) error {
 
-	port, err := GetPort(cfg.Port)
-	if err != nil {
-		return "", err
+	// validate user provided port address
+	if cfg.Port != 0 {
+		err := ValidatePort(cfg.Port)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 
+	// validate user provided ip address
 	if cfg.PreferredIP != "" {
-		err = ValidateIP(cfg.PreferredIP)
+		err := ValidateIP(cfg.PreferredIP)
 		if err != nil {
-			return "", err
+			return err
 		}
-	} else {
-		ip, err = GetLocalIP()
-		if err != nil {
-			return "", err
-		}
+		return nil
 	}
 
-	return ip + port, nil
+	// get an ip and port for http file server
+	var err error
+
+	cfg.Port, err = GetLocalPort(cfg.Port)
+	if err != nil {
+		return err
+	}
+
+	cfg.PreferredIP, err = GetLocalIP()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GetLocalIP function return the local ip address of your device that is currently
@@ -89,28 +102,20 @@ func ValidateIP(ip string) error {
 }
 
 // GetPortAddr find a available port and return it or check a given port is available or not.
-func GetPort(port int) (string, error) {
-	if port != 0 {
-		err := isPortAvailable(port)
-		if err != nil {
-			return "", err
-		}
-		return ":" + strconv.Itoa(port), nil
-	}
-
+func GetLocalPort(port int) (int, error) {
 	// do a tcp req for port :0 to find a port...
 	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
-		return "", fmt.Errorf("failed to established a connection on port %d. %w", port, err)
+		return 0, fmt.Errorf("failed to established a connection on port %d. %w", port, err)
 	}
 	defer ln.Close()
 
 	p := ln.Addr().(*net.TCPAddr).Port
-	return ":" + strconv.Itoa(p), nil
+	return p, nil
 }
 
 // check the given port is available for use or not
-func isPortAvailable(port int) error {
+func ValidatePort(port int) error {
 	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
 		return fmt.Errorf("port :%d is not available. %w", port, err)
