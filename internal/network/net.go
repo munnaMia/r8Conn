@@ -11,14 +11,19 @@ import (
 
 // check user provided ip and port are valid or not and return error. if configuration hold default values then it assing ip and port on it
 func InitializeAddr(cfg *config.Config) error {
+	var err error
 
 	// validate user provided port address
 	if cfg.Port != 0 {
-		err := ValidatePort(cfg.Port)
+		err = ValidatePort(cfg.Port)
 		if err != nil {
 			return err
 		}
-		return nil
+	} else {
+		cfg.Port, err = GetLocalPort(cfg.Port)
+		if err != nil {
+			return err
+		}
 	}
 
 	// validate user provided ip address
@@ -27,20 +32,11 @@ func InitializeAddr(cfg *config.Config) error {
 		if err != nil {
 			return err
 		}
-		return nil
-	}
-
-	// get an ip and port for http file server
-	var err error
-
-	cfg.Port, err = GetLocalPort(cfg.Port)
-	if err != nil {
-		return err
-	}
-
-	cfg.PreferredIP, err = GetLocalIP()
-	if err != nil {
-		return err
+	} else {
+		cfg.PreferredIP, err = GetLocalIP()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -123,4 +119,14 @@ func ValidatePort(port int) error {
 	defer ln.Close()
 
 	return nil
+}
+
+// format port address int to string
+func FormatBindPort(port int) string {
+	return ":" + strconv.Itoa(port)
+}
+
+// format the url
+func FormatURL(ip string, port int) string {
+	return fmt.Sprintf("http://%s:%d", ip, port)
 }
