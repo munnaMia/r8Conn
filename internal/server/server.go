@@ -27,6 +27,7 @@ func (svr *Server) Start() {
 
 	httpServer := &http.Server{
 		Addr: svr.Addr,
+		Handler: mux,
 	}
 
 	slog.Info("Starting the HTTP service", "PORT", svr.Addr)

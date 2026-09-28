@@ -1,12 +1,7 @@
 package main
 
-import (
-	"fmt"
-
-	"github.com/munnaMia/r8Conn/internal/network"
-)
+import "github.com/munnaMia/r8Conn/cmd"
 
 func main() {
-	// cmd.Run()
-	fmt.Println(network.ValidateIP("192.168.43.83"))
+	cmd.Run()
 }
