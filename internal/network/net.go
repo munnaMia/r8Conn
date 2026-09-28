@@ -5,7 +5,33 @@ import (
 	"net"
 	"strconv"
 	"strings"
+
+	"github.com/munnaMia/r8Conn/internal/config"
 )
+
+// validate user provided ip & port or if user doesn't provide one bring a valided ip and port from system and return.
+func GetAddr(cfg *config.Config) (string, error) {
+	var ip string
+
+	port, err := GetPort(cfg.Port)
+	if err != nil {
+		return "", err
+	}
+
+	if cfg.PreferredIP != "" {
+		err = ValidateIP(cfg.PreferredIP)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		ip, err = GetLocalIP()
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return ip + port, nil
+}
 
 // GetLocalIP function return the local ip address of your device that is currently
 // available for connect and it remove the port address from the ip. e.g. 192.168.0.1:99
@@ -65,7 +91,7 @@ func ValidateIP(ip string) error {
 // GetPortAddr find a available port and return it or check a given port is available or not.
 func GetPort(port int) (string, error) {
 	if port != 0 {
-		err := IsPortAvailable(port)
+		err := isPortAvailable(port)
 		if err != nil {
 			return "", err
 		}
@@ -84,7 +110,7 @@ func GetPort(port int) (string, error) {
 }
 
 // check the given port is available for use or not
-func IsPortAvailable(port int) error {
+func isPortAvailable(port int) error {
 	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
 		return fmt.Errorf("port :%d is not available. %w", port, err)
