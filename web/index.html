@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>RH Connect - Mobile File Sharing</title>
-        <link rel="stylesheet" href="assets/styles/style.css">
+        <link rel="stylesheet" href="assets/styles/style.css" />
     </head>
     <body>
         <div class="app-container">
@@ -14,61 +14,29 @@
                     <div class="brand-group">
                         <div class="brand-logo">
                             <!-- Icon Image using local path assets/icons/wifi.svg with inline SVG fallback -->
-                            <img
-                                class="icon-img lg"
-                                src="assets/logo/r8Conn.png"
-                                alt="r8Conn"
-                            />
+                            <img class="icon-img lg" src="assets/logo/r8Conn.png" alt="r8Conn" />
                         </div>
                         <div>
                             <h1 class="brand-title">r8Conn</h1>
                             <div class="status-badge">
-                                <span class="dot-live"></span>
-                                <span>Connected</span>
+                                <span>Files without friction</span>
                             </div>
                         </div>
                     </div>
 
                     <button id="refreshBtn" title="Sync connection" class="btn-icon-square">
-                        <img
-                            class="icon-img"
-                            src="assets/icons/rotate.svg"
-                            alt="Refresh"
-                            onerror="
-                                this.onerror = null;
-                                this.src =
-                                    'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2364748b\' stroke-width=\'2\'><path d=\'M21.5 2v6h-6M2.5 22v-6h6\'/><path d=\'M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16\'/></svg>';
-                            "
-                        />
+                        <img class="icon-img" src="assets/icons/refresh.svg" alt="Refresh" />
                     </button>
                 </div>
 
                 <!-- Network Info Bar -->
                 <div class="connection-strip">
                     <div class="strip-item">
-                        <img
-                            class="icon-img sm"
-                            src="assets/icons/laptop.svg"
-                            alt="Laptop"
-                            onerror="
-                                this.onerror = null;
-                                this.src =
-                                    'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%234f46e5\' stroke-width=\'2\'><rect x=\'2\' y=\'3\' width=\'20\' height=\'14\' rx=\'2\'/><line x1=\'2\' y1=\'21\' x2=\'22\' y2=\'21\'/></svg>';
-                            "
-                        />
+                        <img class="icon-img sm" src="assets/icons/laptop.svg" alt="Laptop" />
                         <span>192.168.1.105</span>
                     </div>
                     <div class="strip-item" style="color: var(--emerald); font-weight: 700">
-                        <img
-                            class="icon-img sm"
-                            src="assets/icons/bolt.svg"
-                            alt="Speed"
-                            onerror="
-                                this.onerror = null;
-                                this.src =
-                                    'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2310b981\' stroke-width=\'2\'><polygon points=\'13 2 3 14 12 14 11 22 21 10 12 10 13 2\'/></svg>';
-                            "
-                        />
+                        <img class="icon-img sm" src="assets/icons/bolt.svg" alt="Speed" />
                         <span>54 Mb/s</span>
                     </div>
                 </div>
@@ -76,31 +44,13 @@
                 <!-- Navigation Bar -->
                 <nav class="nav-tabs">
                     <button id="tabUpload" onclick="switchTab('upload')" class="tab-btn active">
-                        <img
-                            class="icon-img"
-                            src="assets/icons/upload.svg"
-                            alt="Upload"
-                            onerror="
-                                this.onerror = null;
-                                this.src =
-                                    'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\'/><polyline points=\'17 8 12 3 7 8\'/><line x1=\'12\' y1=\'3\' x2=\'12\' y2=\'15\'/></svg>';
-                            "
-                        />
+                        <img class="icon-img" src="assets/icons/upload.svg" alt="Upload" />
                         <span>Upload</span>
                         <span id="uploadBadge" class="tab-badge hidden">0</span>
                     </button>
 
                     <button id="tabDownload" onclick="switchTab('download')" class="tab-btn">
-                        <img
-                            class="icon-img"
-                            src="assets/icons/download.svg"
-                            alt="Download"
-                            onerror="
-                                this.onerror = null;
-                                this.src =
-                                    'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\'/><polyline points=\'7 10 12 15 17 10\'/><line x1=\'12\' y1=\'15\' x2=\'12\' y2=\'3\'/></svg>';
-                            "
-                        />
+                        <img class="icon-img" src="assets/icons/download.svg" alt="Download" />
                         <span>Download</span>
                         <span id="downloadBadge" class="tab-badge hidden">0</span>
                     </button>
@@ -115,60 +65,21 @@
                     <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
                         <input type="file" id="fileInput" multiple style="display: none" onchange="handleFileSelect(event)" />
                         <div class="drop-icon-wrapper">
-                            <img
-                                class="icon-img lg"
-                                src="assets/icons/file-plus.svg"
-                                alt="Add File"
-                                onerror="
-                                    this.onerror = null;
-                                    this.src =
-                                        'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%234f46e5\' stroke-width=\'2\'><path d=\'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\'/><polyline points=\'14 2 14 8 20 8\'/><line x1=\'12\' y1=\'18\' x2=\'12\' y2=\'12\'/><line x1=\'9\' y1=\'15\' x2=\'15\' y2=\'15\'/></svg>';
-                                "
-                            />
+                            <img class="icon-img lg" src="assets/icons/plus.svg" alt="Add File" />
                         </div>
-                        <h3 class="drop-title">Select files to send to PC</h3>
-                        <p class="drop-sub">Tap to choose photos, documents, videos, or audio</p>
-                        <button type="button" class="btn-choose">
-                            <img
-                                class="icon-img sm"
-                                src="assets/icons/folder-open.svg"
-                                alt="Folder"
-                                onerror="
-                                    this.onerror = null;
-                                    this.src =
-                                        'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z\'/></svg>';
-                                "
-                            />
-                            Choose Files
-                        </button>
+
+                        <h3 class="drop-title">Select files to send</h3>
+                        <p class="drop-sub">Drag or tap to choose documents and more.</p>
                     </div>
 
                     <!-- Selected Queue Header -->
                     <div id="selectedFilesHeader" class="section-header hidden">
                         <span class="section-title">
-                            <img
-                                class="icon-img sm"
-                                src="assets/icons/list-check.svg"
-                                alt="Queue"
-                                onerror="
-                                    this.onerror = null;
-                                    this.src =
-                                        'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%234f46e5\' stroke-width=\'2\'><polyline points=\'9 11 12 14 22 4\'/><path d=\'M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11\'/></svg>';
-                                "
-                            />
+                            <img class="icon-img sm" src="assets/icons/checkbox.svg" alt="Queue" />
                             Queue (<span id="fileCountText">0</span>)
                         </span>
                         <button onclick="clearAllSelected()" class="btn-text-danger">
-                            <img
-                                class="icon-img sm"
-                                src="assets/icons/trash.svg"
-                                alt="Trash"
-                                onerror="
-                                    this.onerror = null;
-                                    this.src =
-                                        'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23ef4444\' stroke-width=\'2\'><polyline points=\'3 6 5 6 21 6\'/><path d=\'M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\'/></svg>';
-                                "
-                            />
+                            <img class="icon-img sm" src="assets/icons/trash-check.svg" alt="Trash" />
                             Clear all
                         </button>
                     </div>
@@ -179,17 +90,7 @@
                     <!-- Action Button -->
                     <div>
                         <button id="mainActionButton" onclick="handleMainAction()" class="btn-primary-block">
-                            <img
-                                id="actionIconImg"
-                                class="icon-img"
-                                src="assets/icons/folder-open.svg"
-                                alt="Open"
-                                onerror="
-                                    this.onerror = null;
-                                    this.src =
-                                        'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'white\' stroke-width=\'2\'><path d=\'M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z\'/></svg>';
-                                "
-                            />
+                            <img id="actionIconImg" class="icon-img" src="assets/icons/folder-open.svg" alt="Open" />
                             <span id="actionText">Select Files</span>
                         </button>
                     </div>
@@ -198,16 +99,7 @@
                     <div id="recentUploadsContainer" class="hidden" style="border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 8px">
                         <div class="section-header" style="margin-bottom: 8px">
                             <span class="section-title">
-                                <img
-                                    class="icon-img sm"
-                                    src="assets/icons/clock.svg"
-                                    alt="Clock"
-                                    onerror="
-                                        this.onerror = null;
-                                        this.src =
-                                            'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2310b981\' stroke-width=\'2\'><circle cx=\'12\' cy=\'12\' r=\'10\'/><polyline points=\'12 6 12 12 16 14\'/></svg>';
-                                    "
-                                />
+                                <img class="icon-img sm" src="assets/icons/clock-five.svg" alt="Clock" />
                                 Sent to Laptop
                             </span>
                             <span id="completedCount" style="font-size: 0.75rem; color: var(--emerald); font-weight: 700">0 items</span>
@@ -223,28 +115,10 @@
                         <div class="breadcrumb-trail" id="breadcrumbContainer"></div>
                         <div style="display: flex; gap: 4px">
                             <button id="upDirectoryBtn" onclick="navigateUpDirectory()" title="Parent Directory" class="btn-icon-square hidden">
-                                <img
-                                    class="icon-img sm"
-                                    src="assets/icons/arrow-up.svg"
-                                    alt="Up"
-                                    onerror="
-                                        this.onerror = null;
-                                        this.src =
-                                            'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2364748b\' stroke-width=\'2\'><line x1=\'12\' y1=\'19\' x2=\'12\' y2=\'5\'/><polyline points=\'5 12 12 5 19 12\'/></svg>';
-                                    "
-                                />
+                                <img class="icon-img sm" src="assets/icons/arrow-small-up.svg" alt="Up" />
                             </button>
                             <button onclick="renderSharedFiles()" title="Refresh Folder" class="btn-icon-square">
-                                <img
-                                    class="icon-img sm"
-                                    src="assets/icons/rotate.svg"
-                                    alt="Refresh"
-                                    onerror="
-                                        this.onerror = null;
-                                        this.src =
-                                            'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2364748b\' stroke-width=\'2\'><path d=\'M21.5 2v6h-6M2.5 22v-6h6\'/><path d=\'M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16\'/></svg>';
-                                    "
-                                />
+                                <img class="icon-img sm" src="assets/icons/refresh.svg" alt="Refresh" />
                             </button>
                         </div>
                     </div>
@@ -252,29 +126,11 @@
                     <!-- Search Bar & Controls -->
                     <div class="search-row">
                         <div class="search-box">
-                            <img
-                                class="icon-img sm"
-                                src="assets/icons/search.svg"
-                                alt="Search"
-                                onerror="
-                                    this.onerror = null;
-                                    this.src =
-                                        'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2394a3b8\' stroke-width=\'2\'><circle cx=\'11\' cy=\'11\' r=\'8\'/><line x1=\'21\' y1=\'21\' x2=\'16.65\' y2=\'16.65\'/></svg>';
-                                "
-                            />
+                            <img class="icon-img sm" src="assets/icons/search.svg" alt="Search" />
                             <input type="text" id="searchInput" oninput="filterSharedFiles()" placeholder="Search current folder..." />
                         </div>
                         <button onclick="toggleSelectAllShared()" class="btn-secondary">
-                            <img
-                                class="icon-img sm"
-                                src="assets/icons/check-square.svg"
-                                alt="Select All"
-                                onerror="
-                                    this.onerror = null;
-                                    this.src =
-                                        'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%234f46e5\' stroke-width=\'2\'><polyline points=\'9 11 12 14 22 4\'/><path d=\'M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11\'/></svg>';
-                                "
-                            />
+                            <img class="icon-img sm" src="assets/icons/checkbox.svg" alt="Select All" />
                             Select All
                         </button>
                     </div>
@@ -291,16 +147,7 @@
                     <!-- Download Action Button -->
                     <div style="position: sticky; bottom: 0; padding-top: 8px">
                         <button id="downloadNowBtn" onclick="downloadSelectedFiles()" disabled class="btn-primary-block">
-                            <img
-                                class="icon-img"
-                                src="assets/icons/download.svg"
-                                alt="Download"
-                                onerror="
-                                    this.onerror = null;
-                                    this.src =
-                                        'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\'/><polyline points=\'7 10 12 15 17 10\'/><line x1=\'12\' y1=\'15\' x2=\'12\' y2=\'3\'/></svg>';
-                                "
-                            />
+                            <img class="icon-img" src="assets/icons/download.svg" alt="Download" />
                             <span id="downloadBtnText">Select files to download</span>
                         </button>
                     </div>
@@ -323,17 +170,7 @@
                         justify-content: center;
                     "
                 >
-                    <img
-                        id="modalIcon"
-                        class="icon-img lg"
-                        src="assets/icons/upload.svg"
-                        alt="Transfer"
-                        onerror="
-                            this.onerror = null;
-                            this.src =
-                                'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%234f46e5\' stroke-width=\'2\'><polyline points=\'17 8 12 3 7 8\'/><line x1=\'12\' y1=\'3\' x2=\'12\' y2=\'15\'/></svg>';
-                        "
-                    />
+                    <img id="modalIcon" class="icon-img lg" src="assets/icons/upload.svg" alt="Transfer" />
                 </div>
                 <h4 id="modalTitle" style="font-size: 1rem; font-weight: 700">Transferring Files</h4>
                 <p id="modalSub" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px">Connecting to RH-Laptop...</p>
@@ -353,17 +190,7 @@
 
         <!-- Toast Notification Popup -->
         <div id="toast" class="toast">
-            <img
-                id="toastIcon"
-                class="icon-img sm"
-                src="assets/icons/check-square.svg"
-                alt="Check"
-                onerror="
-                    this.onerror = null;
-                    this.src =
-                        'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2310b981\' stroke-width=\'2\'><polyline points=\'20 6 9 17 4 12\'/></svg>';
-                "
-            />
+            <img id="toastIcon" class="icon-img sm" src="assets/icons/checkbox.svg" alt="Check" />
             <span id="toastMessage">Action completed</span>
         </div>
 

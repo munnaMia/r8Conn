@@ -23,6 +23,7 @@
     --rose: #ef4444;
     --rose-light: #fee2e2;
     --text-main: #0f172a;
+    --text-secondary: #2b2f36;
     --text-muted: #64748b;
     --text-light: #94a3b8;
     --radius-sm: 8px;
@@ -146,7 +147,7 @@ body {
     width: 40px;
     height: 40px;
     border-radius: var(--radius-md);
-    background: linear-gradient(135deg, #4f46e5, #06b6d4);
+    background: linear-gradient(135deg, #ffffff, hsl(223, 37%, 96%));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -161,20 +162,12 @@ body {
 }
 
 .status-badge {
-    font-size: 0.75rem;
-    color: var(--primary);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 6px;
-}
-
-.dot-live {
-    width: 8px;
-    height: 8px;
-    background-color: var(--emerald);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
@@ -333,27 +326,6 @@ body {
     font-size: 0.75rem;
     color: var(--text-muted);
     margin-top: 4px;
-}
-
-.btn-choose {
-    margin-top: 14px;
-    padding: 8px 16px;
-    background-color: var(--primary-light);
-    color: var(--primary);
-    border: 1px solid #c7d2fe;
-    border-radius: var(--radius-sm);
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.2s;
-}
-
-.btn-choose:hover {
-    background-color: var(--primary);
-    color: #ffffff;
 }
 
 /* Queue Header & Item Lists */
