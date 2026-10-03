@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log/slog"
 
 	"github.com/munnaMia/r8Conn/internal/cli"
@@ -40,6 +41,7 @@ func Run() {
 	if cfg.Headless {
 		// run the CLI mode
 		slog.Info("start the cli mode of r8Conn")
+		fmt.Println(cfg) // temp remove letter...
 
 		// start the http server on a separate go routine
 		server.Start()
