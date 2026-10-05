@@ -172,3 +172,50 @@ body {
     align-items: center;
     gap: 6px;
 }
+
+.nav-tabs {
+    margin-top: 10px;
+    padding: 4px;
+    background-color: var(--bg-subtle);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    display: flex;
+    gap: 8px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background-color: var(--primary);
+    color: #ffffff;
+    box-shadow: var(--shadow-md);
+}
+
+.tab-badge {
+    background-color: #ffffff;
+    color: var(--primary);
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: var(--radius-full);
+}
+
+.tab-btn.active .tab-badge {
+    background-color: #ffffff;
+    color: var(--primary);
+}

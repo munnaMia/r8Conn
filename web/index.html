@@ -28,7 +28,17 @@
 
                 <!-- Navigation Block -->
                 <div class="nav-tabs">
-                    
+                    <button id="tabUpload" onclick="switchTab('upload')" class="tab-btn active">
+                        <img class="icon-img" src="assets/icons/upload.svg" alt="upload" />
+                        <span>Upload</span>
+                        <span id="uploadBadge" class="tab-badge hidden">0</span>
+                    </button>
+
+                    <button id="tabDownload" onclick="switchTab('download')" class="tab-btn">
+                        <img class="icon-img" src="assets/icons/download.svg" alt="download" />
+                        <span>Download</span>
+                        <span id="downloadBadge" class="tab-badge hidden">0</span>
+                    </button>
                 </div>
             </header>
 
@@ -38,5 +48,7 @@
             <!-- footer -->
             <footer>This is footer</footer>
         </div>
+
+        <script src="assets/scripts/script.js" defer></script>
     </body>
 </html>
