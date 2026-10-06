@@ -27,7 +27,7 @@ func Run() {
 	err := network.InitializeAddr(cfg)
 	if err != nil {
 		slog.Error("failed to initialized network ip and port", "error", err)
-		return
+		return // with out wifi the app breaks here...
 	}
 
 	// initialized a new application handler

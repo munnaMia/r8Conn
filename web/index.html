@@ -9,9 +9,8 @@
     </head>
     <body>
         <div class="app-container">
-            <!-- header  -->
+            <!-- Header Block  -->
             <header class="app-header">
-                <!-- Header Block -->
                 <div class="header-top">
                     <div class="brand-group">
                         <div class="brand-logo">
@@ -42,8 +41,28 @@
                 </div>
             </header>
 
-            <!-- main  -->
-            <main>This is body</main>
+            <!-- App Main Body  -->
+            <main class="app-main">
+                <!-- ================== UPLOAD SECTION ================== -->
+                <section id="sectionUpload">
+                    <!-- File Dropzone -->
+                    <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" name="files" multiple id="fileInput" onchange="handleFileSelect(event)"/>
+
+                        <div class="drop-icon-wrapper">
+                            <img class="icon-img lg" src="assets/icons/plus.svg" alt="add files" />
+                        </div>
+
+                        <h3 class="drop-title">Select files to send</h3>
+                        <p class="drop-sub">Drag or Tap to choose documents and more.</p>
+                    </div>
+                </section>
+
+                <!-- ================== DOWNLOAD SECTION ================== -->
+                <section id="sectionDownload" class="hidden">
+                    Section download
+                </section>
+            </main>
 
             <!-- footer -->
             <footer>This is footer</footer>
