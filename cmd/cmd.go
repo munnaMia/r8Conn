@@ -37,7 +37,6 @@ func Run() {
 
 		// start the TUI version
 		tui.Run(h, cfg)
-
 	} else {
 		// run the GUI mode
 	}
