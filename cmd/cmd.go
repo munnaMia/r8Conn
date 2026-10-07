@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/munnaMia/r8Conn/internal/cli"
@@ -31,12 +30,11 @@ func Run() {
 	h := handler.NewHandler()
 
 	if cfg.CLI {
-		// run the CLI mode
-		slog.Info("start the cli mode of r8Conn")
-		fmt.Println(cfg.Debug) // temp remove letter...
-
-		// start the TUI version
-		tui.Run(h, cfg)
+		// start the TUI mode
+		if err := tui.Run(h, cfg); err != nil {
+			slog.Error("Failed to run TUI", "error", err)
+			return
+		}
 	} else {
 		// run the GUI mode
 	}
