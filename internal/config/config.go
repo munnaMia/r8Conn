@@ -3,8 +3,10 @@ package config
 type Config struct {
 	Port        int
 	PreferredIP string
-	Headless    bool
 	ShareDir    string
+	CLI         bool
+	AddSource   bool
+	Debug       bool
 }
 
 // NewConfig return an instance of config struct with some default values
@@ -12,7 +14,9 @@ func NewConfig() *Config {
 	return &Config{
 		Port:        0,
 		PreferredIP: "",
-		Headless:    false,
 		ShareDir:    ".",
+		CLI:         false,
+		AddSource:   false,
+		Debug:       false,
 	}
 }

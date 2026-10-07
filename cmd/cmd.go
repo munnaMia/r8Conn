@@ -13,18 +13,23 @@ import (
 )
 
 func Run() {
-	// setup a new logger for the application
-	lg := logger.NewLogger(false, false)
-	slog.SetDefault(lg)
-
 	// fetch default config
 	cfg := config.NewConfig()
+
+	// setup a new logger for the application
+	lg, cleanUp, err := logger.NewLogger(cfg)
+	if err != nil {
+		slog.Error("failed to initialized logger", "error", err)
+		return
+	}
+	defer cleanUp()
+	slog.SetDefault(lg)
 
 	// initialze cli flags
 	cli.ParseFlags(cfg)
 
 	// fetch the ip and port
-	err := network.InitializeAddr(cfg)
+	err = network.InitializeAddr(cfg)
 	if err != nil {
 		slog.Error("failed to initialized network ip and port", "error", err)
 		return // with out wifi the app breaks here...
@@ -38,7 +43,7 @@ func Run() {
 
 	server := server.NewServer(h, addr)
 
-	if cfg.Headless {
+	if cfg.CLI {
 		// run the CLI mode
 		slog.Info("start the cli mode of r8Conn")
 		fmt.Println(cfg) // temp remove letter...
