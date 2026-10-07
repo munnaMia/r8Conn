@@ -16,6 +16,9 @@ func Run() {
 	// fetch default config
 	cfg := config.NewConfig()
 
+	// initialze cli flags
+	cli.ParseFlags(cfg)
+
 	// setup a new logger for the application
 	lg, cleanUp, err := logger.NewLogger(cfg)
 	if err != nil {
@@ -24,9 +27,6 @@ func Run() {
 	}
 	defer cleanUp()
 	slog.SetDefault(lg)
-
-	// initialze cli flags
-	cli.ParseFlags(cfg)
 
 	// fetch the ip and port
 	err = network.InitializeAddr(cfg)
@@ -46,7 +46,7 @@ func Run() {
 	if cfg.CLI {
 		// run the CLI mode
 		slog.Info("start the cli mode of r8Conn")
-		fmt.Println(cfg) // temp remove letter...
+		fmt.Println(cfg.Debug) // temp remove letter...
 
 		// start the http server on a separate go routine
 		server.Start()

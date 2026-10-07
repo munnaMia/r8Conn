@@ -36,7 +36,6 @@ func NewLogger(cfg *config.Config) (*slog.Logger, func(), error) {
 	if err != nil {
 		writer = io.Discard
 	} else {
-
 		writer = f
 		cleanUp = func() {
 			_ = f.Close()
