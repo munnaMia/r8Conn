@@ -17,11 +17,25 @@ type ErrMsg error
 type SuccessMsg string
 
 var (
+	appTitle = `
+██████╗  ██████╗  ██████╗ ██████╗ ███╗   ██╗███╗   ██╗
+██╔══██╗ ██╔═██║ ██╔════╝██╔═══██╗████╗  ██║████╗  ██║
+██████╔╝ ██████║ ██║     ██║   ██║██╔██╗ ██║██╔██╗ ██║
+██╔══██╗ ██╔═██║ ██║     ██║   ██║██║╚██╗██║██║╚██╗██║
+██║  ██║ ██████║ ╚██████╗╚██████╔╝██║ ╚████║██║ ╚████║
+╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═══╝
+	`
+
+	subTitleText = "------Files without frictions------"
+)
+
+var (
 	titleStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#4f46e5")).
+			Foreground(lipgloss.Color("#827cff")).
 			Bold(true)
 
 	subTextStyle = lipgloss.NewStyle().
+			Align(lipgloss.Center).
 			Foreground(lipgloss.Color("#d1fae5")).
 			Italic(true)
 
@@ -39,6 +53,12 @@ var (
 			BorderForeground(lipgloss.Color("#FF5F5F")).
 			Padding(1, 2).
 			Margin(1, 0)
+
+	appBox = lipgloss.NewStyle().
+		Border(lipgloss.BlockBorder()).
+		BorderForeground(lipgloss.Color("#6557fe")).
+		Padding(1, 2).
+		Margin(1, 0)
 )
 
 type model struct {
@@ -79,17 +99,26 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
+	var content string
+
 	if m.err != nil {
-		content := fmt.Sprintf(
-			"%s \n\n %s \n\n %s",
+		content = fmt.Sprintf(
+			"%s \n\n %s \n %s \n\n %s",
+			titleGenerate(appTitle, subTitleText),
 			errorTitleStyle.Render("!!Connection Error"),
 			errorTextStyle.Render(m.err.Error()),
-			subTextStyle.Render("Press [r] to Try Again  •  Press [q] to Quit"),
+			subTextStyle.Render("Press [r] to Try Again  •  Press [q or CTRL+c] to Quit"),
 		)
 
 		return errorBox.Render(content)
 	}
-	return ""
+
+	content = fmt.Sprintf(
+		"%s \n\n",
+		titleGenerate(appTitle, subTitleText),
+	)
+
+	return appBox.Render(content)
 }
 
 func (m model) InitServer() tea.Msg {
@@ -121,4 +150,13 @@ func Run(h *handler.Handler, cfg *config.Config) error {
 		return err
 	}
 	return nil
+}
+
+func titleGenerate(title, subText string) string {
+	content := lipgloss.JoinVertical(
+		lipgloss.Center,
+		titleStyle.Render(title),
+		subTextStyle.Render(subText),
+	)
+	return fmt.Sprintf("%s", content)
 }
