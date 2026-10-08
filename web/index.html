@@ -28,13 +28,13 @@
                 <!-- Navigation Block -->
                 <div class="nav-tabs">
                     <button id="tabUpload" onclick="switchTab('upload')" class="tab-btn active">
-                        <img class="icon-img" src="assets/icons/upload.svg" alt="upload" />
+                        <img class="icon-img sm white-icon" src="assets/icons/upload.svg" alt="upload" />
                         <span>Upload</span>
                         <span id="uploadBadge" class="tab-badge hidden">0</span>
                     </button>
 
                     <button id="tabDownload" onclick="switchTab('download')" class="tab-btn">
-                        <img class="icon-img" src="assets/icons/download.svg" alt="download" />
+                        <img class="icon-img sm muted-icon" src="assets/icons/download.svg" alt="download" />
                         <span>Download</span>
                         <span id="downloadBadge" class="tab-badge hidden">0</span>
                     </button>
@@ -47,21 +47,55 @@
                 <section id="sectionUpload">
                     <!-- File Dropzone -->
                     <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
-                        <input type="file" name="files" multiple id="fileInput" onchange="handleFileSelect(event)"/>
+                        <input type="file" name="files" multiple id="fileInput" onchange="handleFileSelect(event)" />
 
                         <div class="drop-icon-wrapper">
-                            <img class="icon-img lg" src="assets/icons/plus.svg" alt="add files" />
+                            <img class="icon-img lg muted-icon" src="assets/icons/plus.svg" alt="add files" />
                         </div>
 
                         <h3 class="drop-title">Select files to send</h3>
                         <p class="drop-sub">Drag or Tap to choose documents and more.</p>
                     </div>
+
+                    <!-- letter make it hidden -->
+                    <div id="selectedFilesHeader" class="section-header">
+                        <span class="section-title">
+                            <img class="icon-img sm muted-icon" src="assets/icons/box-open-full.svg" alt="Queue" />
+                            Queue (<span id="fileCountText">0</span>)
+                        </span>
+                        <button class="btn-text-danger" onclick="clearAllSeleceted()">
+                            <img class="icon-img sm danger-icon" src="assets/icons/trash-check.svg" alt="Trash" />
+                            Clear all
+                        </button>
+                    </div>
+
+                    <!-- seleted files list  -->
+                    <div id="selectedFilesList" class="file-list"></div>
+
+                    <!-- letter make this button also hidden  -->
+                    <div>
+                        <button class="btn-primary-block" id="uploadActionButton" onclick="startUploadProcess()">
+                            <img class="icon-img md white-icon" src="assets/icons/folder-open.svg" alt="upload" />
+                            <span>Upload Files</span>
+                        </button>
+                    </div>
+
+                    <!-- upload history -->
+                    <!-- leeter make this also hidden  -->
+                    <div id="recentUploadsContainer" class="">
+                        <div class="section-header" style="margin-bottom: 8px">
+                            <span class="section-title">
+                                <img class="icon-img sm muted-icon" src="assets/icons/clock-five.svg" alt="clock" />
+                                Recently shared.
+                            </span>
+                            <span id="completedCount">0 items</span>
+                        </div>
+                        <div id="recentUploadsList" class="file-list"></div>
+                    </div>
                 </section>
 
                 <!-- ================== DOWNLOAD SECTION ================== -->
-                <section id="sectionDownload" class="hidden">
-                    Section download
-                </section>
+                <section id="sectionDownload" class="hidden">Section download</section>
             </main>
 
             <!-- footer -->
