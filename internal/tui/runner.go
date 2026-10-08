@@ -21,16 +21,14 @@ type SuccessMsg string
 var (
 	appTitle = `
 ██████╗  ██████╗  ██████╗ ██████╗ ███╗   ██╗███╗   ██╗
-██████╔╝ ██████║ ██║     ██║   ██║██╔██╗ ██║██╔██╗ ██║
+██████║  ██████║ ██║     ██║   ██║██╔██╗ ██║██╔██╗ ██║
 ██║  ██║ ██████║ ╚██████╗╚██████╔╝██║ ╚████║██║ ╚████║
 ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═══╝
 	`
 
 	subTitleText = "------Files without frictions------"
 
-	guide = `
-Connect laptop & mobile to the same Wi-Fi or Mobile Hotspot
-	`
+	guide = "Connect laptop & mobile to the same Wi-Fi or Mobile Hotspot and turn off mobile data"
 )
 
 var (
