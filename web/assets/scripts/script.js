@@ -11,6 +11,8 @@ let fileFormats = {
 let activeTab = "upload";
 const tabUploadBtn = document.getElementById("tabUpload");
 const tabDownloadBtn = document.getElementById("tabDownload");
+const uploadIcon = tabUploadBtn.firstElementChild;
+const downloadIcon = tabDownloadBtn.firstElementChild;
 const sectionUpload = document.getElementById("sectionUpload");
 const sectionDownload = document.getElementById("sectionDownload");
 
@@ -20,11 +22,23 @@ function switchTab(tab) {
     if (tab === "upload") {
         tabUploadBtn.classList.add("active");
         tabDownloadBtn.classList.remove("active");
+
+        uploadIcon.classList.remove("muted-icon");
+        uploadIcon.classList.add("white-icon");
+        downloadIcon.classList.add("muted-icon");
+        downloadIcon.classList.remove("white-icon");
+
         sectionUpload.classList.remove("hidden");
         sectionDownload.classList.add("hidden");
     } else {
         tabDownloadBtn.classList.add("active");
         tabUploadBtn.classList.remove("active");
+
+        uploadIcon.classList.add("muted-icon");
+        uploadIcon.classList.remove("white-icon");
+        downloadIcon.classList.remove("muted-icon");
+        downloadIcon.classList.add("white-icon");
+
         sectionDownload.classList.remove("hidden");
         sectionUpload.classList.add("hidden");
 
@@ -53,8 +67,6 @@ function handleFileSelect(event) {
 
     renderSelectedUploadList();
     event.target.value = "";
-
-    console.log(selectedUploadFiles);
 }
 
 function formatBytes(bytes, decimals = 1) {
@@ -81,5 +93,9 @@ function getFileIconName(fileName) {
     return "file";
 }
 
+function startUploadProcess() {
+    if (selectedUploadFiles.length === 0) return;
+}
+function clearAllSeleceted() {}
 function renderSelectedUploadList() {}
 function renderSharedFiles() {}

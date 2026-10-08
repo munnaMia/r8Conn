@@ -77,32 +77,6 @@ body {
     flex-direction: column;
 }
 
-@media (min-width: 640px) {
-    body {
-        padding: 20px;
-        background-color: #cbd5e1;
-    }
-
-    .app-container {
-        height: min(92dvh, 880px);
-        border-radius: 20px;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
-    }
-}
-
-@media (max-width: 359px) {
-    .app-header {
-        padding: 10px 10px 6px 10px;
-    }
-    .brand-title {
-        font-size: 0.95rem;
-    }
-    .moto-title {
-        font-size: 0.68rem;
-    }
-}
-
 .hidden {
     display: none !important;
 }
@@ -161,6 +135,18 @@ body {
     height: 14px;
 }
 
+.danger-icon {
+    filter: invert(35%) sepia(75%) saturate(3202%) hue-rotate(339deg) brightness(101%) contrast(89%);
+}
+
+.muted-icon {
+    filter: invert(41%) sepia(8%) saturate(1178%) hue-rotate(176deg) brightness(105%) contrast(86%);
+}
+
+.white-icon {
+    filter: invert(82%) sepia(87%) saturate(7499%) hue-rotate(179deg) brightness(101%) contrast(110%);
+}
+
 .brand-title {
     font-size: 1.1rem;
     font-weight: 700;
@@ -178,7 +164,7 @@ body {
 }
 
 .nav-tabs {
-    margin-top: 10px;
+    margin-top: 20px;
     padding: 4px;
     background-color: var(--bg-subtle);
     border-radius: var(--radius-md);
@@ -291,4 +277,101 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
+}
+
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-text-danger {
+    background: none;
+    border: none;
+    color: var(--rose);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-primary-block {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.1s;
+}
+
+.btn-primary-block:active {
+    transform: scale(0.98);
+}
+
+
+
+@media (min-width: 640px) {
+    body {
+        padding: 20px;
+        background-color: #cbd5e1;
+    }
+
+    .app-container {
+        height: min(92dvh, 880px);
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+    }
+}
+
+@media (max-width: 359px) {
+    .app-header {
+        padding: 10px 10px 6px 10px;
+    }
+    .brand-title {
+        font-size: 0.95rem;
+    }
+    .moto-title {
+        font-size: 0.68rem;
+    }
+}
+
+/* Adaptive 2-column layout on wider screens */
+@media (min-width: 520px) {
+    .file-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 10px;
+    }
 }
