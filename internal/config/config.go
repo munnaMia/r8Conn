@@ -1,5 +1,7 @@
 package config
 
+import "github.com/mdp/qrterminal/v4"
+
 type Config struct {
 	Port        int
 	PreferredIP string
@@ -7,6 +9,7 @@ type Config struct {
 	CLI         bool
 	AddSource   bool
 	Debug       bool
+	QrConfig    *qrterminal.Config
 }
 
 // NewConfig return an instance of config struct with some default values
@@ -18,5 +21,12 @@ func NewConfig() *Config {
 		CLI:         false,
 		AddSource:   false,
 		Debug:       false,
+		QrConfig: &qrterminal.Config{
+			Level:     qrterminal.L,
+			WhiteChar: qrterminal.WHITE_WHITE,
+			BlackChar: qrterminal.BLACK_BLACK,
+			QuietZone: 1,
+			HalfBlocks: true,
+		},
 	}
 }

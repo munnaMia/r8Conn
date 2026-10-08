@@ -1,12 +1,14 @@
 package tui
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"log/slog"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/mdp/qrterminal/v4"
 	"github.com/munnaMia/r8Conn/internal/config"
 	"github.com/munnaMia/r8Conn/internal/network"
 	"github.com/munnaMia/r8Conn/internal/server"
@@ -19,14 +21,16 @@ type SuccessMsg string
 var (
 	appTitle = `
 ██████╗  ██████╗  ██████╗ ██████╗ ███╗   ██╗███╗   ██╗
-██╔══██╗ ██╔═██║ ██╔════╝██╔═══██╗████╗  ██║████╗  ██║
 ██████╔╝ ██████║ ██║     ██║   ██║██╔██╗ ██║██╔██╗ ██║
-██╔══██╗ ██╔═██║ ██║     ██║   ██║██║╚██╗██║██║╚██╗██║
 ██║  ██║ ██████║ ╚██████╗╚██████╔╝██║ ╚████║██║ ╚████║
 ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═══╝
 	`
 
 	subTitleText = "------Files without frictions------"
+
+	guide = `
+Connect laptop & mobile to the same Wi-Fi or Mobile Hotspot
+	`
 )
 
 var (
@@ -35,9 +39,18 @@ var (
 			Bold(true)
 
 	subTextStyle = lipgloss.NewStyle().
-			Align(lipgloss.Center).
 			Foreground(lipgloss.Color("#d1fae5")).
 			Italic(true)
+
+	qrStyle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#c5c2ff"))
+
+	simpleTextStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#d1fae5"))
+
+	simpleBlodTextStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color("#d1fae5")).
+				Bold(true)
 
 	errorTitleStyle = lipgloss.NewStyle().
 			Background(lipgloss.Color("#FF5F5F")).
@@ -57,8 +70,7 @@ var (
 	appBox = lipgloss.NewStyle().
 		Border(lipgloss.BlockBorder()).
 		BorderForeground(lipgloss.Color("#6557fe")).
-		Padding(1, 2).
-		Margin(1, 0)
+		Padding(0, 2)
 )
 
 type model struct {
@@ -104,7 +116,7 @@ func (m model) View() string {
 	if m.err != nil {
 		content = fmt.Sprintf(
 			"%s \n\n %s \n %s \n\n %s",
-			titleGenerate(appTitle, subTitleText),
+			m.titleGenerate(appTitle, subTitleText),
 			errorTitleStyle.Render("!!Connection Error"),
 			errorTextStyle.Render(m.err.Error()),
 			subTextStyle.Render("Press [r] to Try Again  •  Press [q or CTRL+c] to Quit"),
@@ -113,9 +125,12 @@ func (m model) View() string {
 		return errorBox.Render(content)
 	}
 
-	content = fmt.Sprintf(
-		"%s \n\n",
-		titleGenerate(appTitle, subTitleText),
+	content = lipgloss.JoinVertical(
+		lipgloss.Center,
+		m.titleGenerate(appTitle, subTitleText),
+		m.connTxtGenerate(),
+		simpleTextStyle.Render(guide),
+		simpleTextStyle.Render("Press [q or CTRL+c] to Quit"),
 	)
 
 	return appBox.Render(content)
@@ -137,6 +152,38 @@ func (m model) InitServer() tea.Msg {
 	return SuccessMsg("Successfully initialized http server")
 }
 
+// generate a proper title box
+func (m model) titleGenerate(title, subText string) string {
+	content := lipgloss.JoinVertical(
+		lipgloss.Center,
+		titleStyle.Render(title),
+		subTextStyle.Render(subText),
+	)
+	return content
+}
+
+// generate the connection string with QR to scan
+func (m model) connTxtGenerate() string {
+	var buf bytes.Buffer
+	m.config.QrConfig.Writer = &buf
+
+	url := network.FormatURL(m.config.PreferredIP, m.config.Port)
+
+	qrterminal.GenerateWithConfig(url, *m.config.QrConfig)
+
+	qrcode := qrStyle.Render(buf.String())
+
+	content := fmt.Sprintf(
+		"\n%s %s %s\n\n%s",
+		simpleBlodTextStyle.Render("Copy the URL"),
+		subTextStyle.Render(url),
+		simpleBlodTextStyle.Render("OR Scan the QR"),
+		qrcode,
+	)
+
+	return content
+}
+
 // Run the terminal user interface.
 func Run(h *handler.Handler, cfg *config.Config) error {
 	initialModel := model{
@@ -150,13 +197,4 @@ func Run(h *handler.Handler, cfg *config.Config) error {
 		return err
 	}
 	return nil
-}
-
-func titleGenerate(title, subText string) string {
-	content := lipgloss.JoinVertical(
-		lipgloss.Center,
-		titleStyle.Render(title),
-		subTextStyle.Render(subText),
-	)
-	return fmt.Sprintf("%s", content)
 }
