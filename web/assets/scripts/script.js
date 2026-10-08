@@ -96,6 +96,7 @@ function getFileIconName(fileName) {
 function startUploadProcess() {
     if (selectedUploadFiles.length === 0) return;
 }
+
 function clearAllSeleceted() {}
 function renderSelectedUploadList() {}
 function renderSharedFiles() {}

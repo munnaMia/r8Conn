@@ -339,7 +339,22 @@ body {
     transform: scale(0.98);
 }
 
+#recentUploadsContainer {
+    border-top: 1pz solid var(--border-color);
+    padding-top: 12px;
+    margin-top: 8px;
+}
 
+#completedCount {
+    font-size: 0.75rem;
+    color: var(--emerald);
+    font-weight: 700;
+}
+
+#recentUploadsList {
+    max-height: 160px;
+    overflow-y: auto;
+}
 
 @media (min-width: 640px) {
     body {

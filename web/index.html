@@ -69,14 +69,29 @@
                         </button>
                     </div>
 
+                    <!-- seleted files list  -->
+                    <div id="selectedFilesList" class="file-list"></div>
+
+                    <!-- letter make this button also hidden  -->
                     <div>
                         <button class="btn-primary-block" id="uploadActionButton" onclick="startUploadProcess()">
-                            <img class="icon-img lg" src="assets/icons/folder-open.svg" alt="upload">
+                            <img class="icon-img md white-icon" src="assets/icons/folder-open.svg" alt="upload" />
                             <span>Upload Files</span>
                         </button>
                     </div>
 
-                    <div id="selectedFilesList" class="file-list"></div>
+                    <!-- upload history -->
+                    <!-- leeter make this also hidden  -->
+                    <div id="recentUploadsContainer" class="">
+                        <div class="section-header" style="margin-bottom: 8px">
+                            <span class="section-title">
+                                <img class="icon-img sm muted-icon" src="assets/icons/clock-five.svg" alt="clock" />
+                                Recently shared.
+                            </span>
+                            <span id="completedCount">0 items</span>
+                        </div>
+                        <div id="recentUploadsList" class="file-list"></div>
+                    </div>
                 </section>
 
                 <!-- ================== DOWNLOAD SECTION ================== -->
