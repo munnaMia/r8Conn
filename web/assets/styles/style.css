@@ -356,6 +356,83 @@ body {
     overflow-y: auto;
 }
 
+.file-item-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    transition:
+        border 0.2s,
+        transform 0.15s,
+        box-shadow 0.2s;
+}
+
+.file-item-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-md);
+}
+
+.file-info-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.file-icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-subtle);
+}
+
+.file-details {
+    overflow: hidden;
+}
+
+.file-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.btn-remove-file {
+    background-color: var(--bg-subtle);
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-remove-file:hover {
+    background-color: var(--rose-light);
+    border-color: #fca5a5;
+}
+
 @media (min-width: 640px) {
     body {
         padding: 20px;
