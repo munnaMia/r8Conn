@@ -8,6 +8,16 @@ let fileFormats = {
     "file-pdf": ["pdf"],
 };
 
+let icons = {
+    "file-image": "picture",
+    "file-video": "video",
+    "file-zip": "zip-file",
+    "file-code": "code",
+    "file-pdf": "file-pdf",
+    file: "document",
+    folder: "folder-open",
+};
+
 let activeTab = "upload";
 const tabUploadBtn = document.getElementById("tabUpload");
 const tabDownloadBtn = document.getElementById("tabDownload");
@@ -15,6 +25,11 @@ const uploadIcon = tabUploadBtn.firstElementChild;
 const downloadIcon = tabDownloadBtn.firstElementChild;
 const sectionUpload = document.getElementById("sectionUpload");
 const sectionDownload = document.getElementById("sectionDownload");
+
+const countText = document.getElementById("fileCountText");
+const uploadBtn = document.getElementById("uploadActionButton");
+const header = document.getElementById("selectedFilesHeader");
+const listContainer = document.getElementById("selectedFilesList");
 
 function switchTab(tab) {
     activeTab = tab;
@@ -69,6 +84,63 @@ function handleFileSelect(event) {
     event.target.value = "";
 }
 
+function renderSelectedUploadList() {
+    listContainer.innerHTML = "";
+
+    if (selectedUploadFiles.length === 0) {
+        header.classList.add("hidden");
+        uploadBtn.classList.add("hidden");
+        return;
+    }
+
+    header.classList.remove("hidden");
+    uploadBtn.classList.remove("hidden");
+    countText.innerText = selectedUploadFiles.length;
+
+    selectedUploadFiles.forEach((file) => {
+        const containerEl = document.createElement("div");
+        containerEl.className = "file-item-card";
+
+        containerEl.innerHTML = `
+                        <div class="file-info-group">
+                            <div class="file-icon-box">
+                                ${getIconImg(file.icon)}
+                            </div>
+                            <div class="file-details">
+                                <div class="file-name">${escapeHtml(file.name)}</div>
+                                <div class="file-meta">${file.formatedSize}</div>
+                            </div>
+                        </div>
+                        <button onclick="removeSelectedFile('${file.id}')" title="remove" class="btn-remove-file">
+                            <img class="icon-img sm danger-icon" src="assets/icons/cross.svg" alt="cross" />
+                        </button>
+        `;
+
+        listContainer.appendChild(containerEl);
+    });
+}
+
+function getIconImg(iconName, extraClass = "") {
+    const iconSrc = icons[iconName] || icons["file"];
+    return `<img src="assets/icons/${iconSrc}.svg" class="icon-img ${extraClass}"></img>`;
+}
+
+function escapeHtml(text) {
+    const htmlEntities = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+        "`": "&#96;",
+    };
+
+    return String(text).replace(/[&<>"']/g, (match) => htmlEntities[match]);
+}
+
+function removeSelectedFile(id) {}
+
+// format bytes into Bytes, KB, MB, GB, TB.
 function formatBytes(bytes, decimals = 1) {
     if (!bytes) return "0 Bytes";
 
@@ -98,5 +170,8 @@ function startUploadProcess() {
 }
 
 function clearAllSeleceted() {}
-function renderSelectedUploadList() {}
 function renderSharedFiles() {}
+
+window.onload = function () {
+    removeSelectedFile();
+};
