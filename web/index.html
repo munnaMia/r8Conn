@@ -57,8 +57,7 @@
                         <p class="drop-sub">Drag or Tap to choose documents and more.</p>
                     </div>
 
-                    <!-- letter make it hidden -->
-                    <div id="selectedFilesHeader" class="section-header">
+                    <div id="selectedFilesHeader" class="section-header hidden">
                         <span class="section-title">
                             <img class="icon-img sm muted-icon" src="assets/icons/box-open-full.svg" alt="Queue" />
                             Queue (<span id="fileCountText">0</span>)
@@ -74,15 +73,14 @@
 
                     <!-- letter make this button also hidden  -->
                     <div>
-                        <button class="btn-primary-block" id="uploadActionButton" onclick="startUploadProcess()">
+                        <button class="btn-primary-block hidden" id="uploadActionButton" onclick="startUploadProcess()">
                             <img class="icon-img md white-icon" src="assets/icons/folder-open.svg" alt="upload" />
                             <span>Upload Files</span>
                         </button>
                     </div>
 
                     <!-- upload history -->
-                    <!-- leeter make this also hidden  -->
-                    <div id="recentUploadsContainer" class="">
+                    <div id="recentUploadsContainer" class="hidden">
                         <div class="section-header" style="margin-bottom: 8px">
                             <span class="section-title">
                                 <img class="icon-img sm muted-icon" src="assets/icons/clock-five.svg" alt="clock" />
