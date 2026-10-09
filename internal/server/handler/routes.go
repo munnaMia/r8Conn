@@ -8,4 +8,5 @@ import (
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.Handle("GET /", http.FileServerFS(web.FS))
+	mux.Handle("POST /files", http.HandlerFunc(h.uploadFiles))
 }

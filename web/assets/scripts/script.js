@@ -120,11 +120,13 @@ function renderSelectedUploadList() {
     });
 }
 
+// get a icon for specific name
 function getIconImg(iconName, extraClass = "") {
     const iconSrc = icons[iconName] || icons["file"];
     return `<img src="assets/icons/${iconSrc}.svg" class="icon-img ${extraClass}"></img>`;
 }
 
+// escape html chars
 function escapeHtml(text) {
     const htmlEntities = {
         "&": "&amp;",
@@ -138,7 +140,17 @@ function escapeHtml(text) {
     return String(text).replace(/[&<>"']/g, (match) => htmlEntities[match]);
 }
 
-function removeSelectedFile(id) {}
+// remove a file from selectedUploadfiles array.
+function removeSelectedFile(id) {
+    selectedUploadFiles = selectedUploadFiles.filter((f) => f.id !== id);
+    renderSelectedUploadList();
+}
+
+// remove all element from the array
+function clearAllSeleceted() {
+    selectedUploadFiles = [];
+    renderSelectedUploadList();
+}
 
 // format bytes into Bytes, KB, MB, GB, TB.
 function formatBytes(bytes, decimals = 1) {
@@ -169,7 +181,6 @@ function startUploadProcess() {
     if (selectedUploadFiles.length === 0) return;
 }
 
-function clearAllSeleceted() {}
 function renderSharedFiles() {}
 
 window.onload = function () {
