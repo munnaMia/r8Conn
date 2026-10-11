@@ -1,3 +1,5 @@
+const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
+
 let selectedUploadFiles = [];
 
 let fileFormats = {
@@ -66,9 +68,8 @@ function handleFileSelect(event) {
     if (files.length === 0) return;
 
     files.forEach((file) => {
-        const exist = selectedUploadFiles.some((f) => {
-            f.name === file.name && f.size === file.size;
-        });
+        const exist = selectedUploadFiles.some((f) => f.name === file.name && f.size === file.size);
+
         if (!exist) {
             selectedUploadFiles.push({
                 id: "UP_" + Date.now() + "_" + Math.random().toString(36).substring(2, 4),
@@ -76,12 +77,53 @@ function handleFileSelect(event) {
                 icon: getFileIconName(file.name),
                 size: file.size,
                 formatedSize: formatBytes(file.size),
+                rawFile: file,
             });
         }
     });
 
     renderSelectedUploadList();
     event.target.value = "";
+}
+
+async function startUploadProcess(event) {
+    event.preventDefault();
+
+    if (selectedUploadFiles.length === 0) return;
+
+    await uploadProcess();
+}
+
+async function uploadProcess() {
+    for (item of selectedUploadFiles) {
+        let file = item.rawFile;
+        let uploadID = item.id;
+        let totalChunk = Math.ceil(file.size / CHUNK_SIZE);
+
+        for (let chunkIdx = 0; chunkIdx < totalChunk; chunkIdx++) {
+            let start = CHUNK_SIZE * chunkIdx;
+            let end = Math.min(start + CHUNK_SIZE, file.size);
+
+            const chunk = file.slice(start, end);
+
+            const formData = new FormData();
+            formData.append("uploadID", uploadID);
+            formData.append("fileName", file.name);
+            formData.append("chunkIdx", chunkIdx);
+            formData.append("totalChunk", totalChunk);
+            formData.append("chunk", chunk);
+
+            const response = await fetch("/files", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                console.error(`failed to upload ${chunkIdx} file name : ${file.name}`);
+                return;
+            }
+        }
+    }
 }
 
 function renderSelectedUploadList() {
@@ -175,10 +217,6 @@ function getFileIconName(fileName) {
     }
 
     return "file";
-}
-
-function startUploadProcess() {
-    if (selectedUploadFiles.length === 0) return;
 }
 
 function renderSharedFiles() {}
