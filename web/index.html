@@ -45,40 +45,41 @@
             <main class="app-main">
                 <!-- ================== UPLOAD SECTION ================== -->
                 <section id="sectionUpload">
-                    <!-- File Dropzone -->
-                    <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
-                        <input type="file" name="files" multiple id="fileInput" onchange="handleFileSelect(event)" />
+                    <form action="" method="post" onsubmit="startUploadProcess(event)">
+                        <!-- File Dropzone -->
+                        <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
+                            <input type="file" name="files" multiple id="fileInput" onchange="handleFileSelect(event)" />
 
-                        <div class="drop-icon-wrapper">
-                            <img class="icon-img lg muted-icon" src="assets/icons/plus.svg" alt="add files" />
+                            <div class="drop-icon-wrapper">
+                                <img class="icon-img lg muted-icon" src="assets/icons/plus.svg" alt="add files" />
+                            </div>
+
+                            <h3 class="drop-title">Select files to send</h3>
+                            <p class="drop-sub">Drag or Tap to choose documents and more.</p>
                         </div>
 
-                        <h3 class="drop-title">Select files to send</h3>
-                        <p class="drop-sub">Drag or Tap to choose documents and more.</p>
-                    </div>
+                        <div id="selectedFilesHeader" class="section-header hidden">
+                            <span class="section-title">
+                                <img class="icon-img sm muted-icon" src="assets/icons/box-open-full.svg" alt="Queue" />
+                                Queue (<span id="fileCountText">0</span>)
+                            </span>
+                            <button class="btn-text-danger" onclick="clearAllSeleceted()">
+                                <img class="icon-img sm danger-icon" src="assets/icons/trash-check.svg" alt="Trash" />
+                                Clear all
+                            </button>
+                        </div>
 
-                    <div id="selectedFilesHeader" class="section-header hidden">
-                        <span class="section-title">
-                            <img class="icon-img sm muted-icon" src="assets/icons/box-open-full.svg" alt="Queue" />
-                            Queue (<span id="fileCountText">0</span>)
-                        </span>
-                        <button class="btn-text-danger" onclick="clearAllSeleceted()">
-                            <img class="icon-img sm danger-icon" src="assets/icons/trash-check.svg" alt="Trash" />
-                            Clear all
-                        </button>
-                    </div>
+                        <!-- seleted files list  -->
+                        <div id="selectedFilesList" class="file-list"></div>
 
-                    <!-- seleted files list  -->
-                    <div id="selectedFilesList" class="file-list"></div>
-
-                    <!-- letter make this button also hidden  -->
-                    <div>
-                        <button class="btn-primary-block hidden" id="uploadActionButton" onclick="startUploadProcess()">
-                            <img class="icon-img md white-icon" src="assets/icons/folder-open.svg" alt="upload" />
-                            <span>Upload Files</span>
-                        </button>
-                    </div>
-
+                        <!-- letter make this button also hidden  -->
+                        <div>
+                            <button class="btn-primary-block hidden" id="uploadActionButton" type="submit">
+                                <img class="icon-img md white-icon" src="assets/icons/folder-open.svg" alt="upload" />
+                                <span>Upload Files</span>
+                            </button>
+                        </div>
+                    </form>
                     <!-- upload history -->
                     <div id="recentUploadsContainer" class="hidden">
                         <div class="section-header" style="margin-bottom: 8px">
@@ -95,9 +96,6 @@
                 <!-- ================== DOWNLOAD SECTION ================== -->
                 <section id="sectionDownload" class="hidden">Section download</section>
             </main>
-
-            <!-- footer -->
-            <footer>This is footer</footer>
         </div>
 
         <script src="assets/scripts/script.js" defer></script>
