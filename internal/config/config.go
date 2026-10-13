@@ -1,11 +1,14 @@
 package config
 
-import "github.com/mdp/qrterminal/v4"
+import (
+	"github.com/mdp/qrterminal/v4"
+)
 
 type Config struct {
 	Port        int
 	PreferredIP string
 	ShareDir    string
+	StorageDir  string
 	CLI         bool
 	AddSource   bool
 	Debug       bool
@@ -17,15 +20,16 @@ func NewConfig() *Config {
 	return &Config{
 		Port:        0,
 		PreferredIP: "",
-		ShareDir:    ".",
+		ShareDir:    "",
+		StorageDir:  "",
 		CLI:         false,
 		AddSource:   false,
 		Debug:       false,
 		QrConfig: &qrterminal.Config{
-			Level:     qrterminal.L,
-			WhiteChar: qrterminal.WHITE_WHITE,
-			BlackChar: qrterminal.BLACK_BLACK,
-			QuietZone: 1,
+			Level:      qrterminal.L,
+			WhiteChar:  qrterminal.WHITE_WHITE,
+			BlackChar:  qrterminal.BLACK_BLACK,
+			QuietZone:  1,
 			HalfBlocks: true,
 		},
 	}
