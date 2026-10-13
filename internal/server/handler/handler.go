@@ -1,7 +1,13 @@
 package handler
 
-type Handler struct{}
+import "github.com/munnaMia/r8Conn/internal/config"
 
-func NewHandler() *Handler {
-	return &Handler{}
+type Handler struct {
+	config *config.Config
+}
+
+func NewHandler(cfg *config.Config) *Handler {
+	return &Handler{
+		config: cfg,
+	}
 }
