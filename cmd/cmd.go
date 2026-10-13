@@ -7,7 +7,7 @@ import (
 	"github.com/munnaMia/r8Conn/internal/config"
 	"github.com/munnaMia/r8Conn/internal/server/handler"
 	"github.com/munnaMia/r8Conn/internal/tui"
-	"github.com/munnaMia/r8Conn/util/logger"
+	"github.com/munnaMia/r8Conn/utils"
 )
 
 func Run() {
@@ -18,7 +18,7 @@ func Run() {
 	cli.ParseFlags(cfg)
 
 	// setup a new logger for the application
-	lg, cleanUp, err := logger.NewLogger(cfg)
+	lg, cleanUp, err := utils.NewLogger(cfg)
 	if err != nil {
 		slog.Error("failed to initialized logger", "error", err)
 		return
@@ -26,8 +26,17 @@ func Run() {
 	defer cleanUp()
 	slog.SetDefault(lg)
 
+	// get a default storage location to store uploaded file. if not provided
+	if cfg.StorageDir == "" {
+		cfg.StorageDir, err = utils.GetDownloadsPath()
+		if err != nil {
+			slog.Error("failed to get a download path", "error", err)
+			return
+		}
+	}
+
 	// initialized a new application handler
-	h := handler.NewHandler()
+	h := handler.NewHandler(cfg)
 
 	if cfg.CLI {
 		// start the TUI mode
