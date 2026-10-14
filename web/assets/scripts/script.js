@@ -1,5 +1,7 @@
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 
+let configuration = {};
+
 let selectedUploadFiles = [];
 let recentSentFiles = [];
 
@@ -40,6 +42,13 @@ const listContainer = document.getElementById("selectedFilesList");
 const recentContainer = document.getElementById("recentUploadsContainer");
 const recentUploadList = document.getElementById("recentUploadsList");
 const sentCount = document.getElementById("completedCount");
+
+// model elements
+const modal = document.getElementById("transferModal");
+const progressBar = document.getElementById("modalProgressBar");
+const modalPercent = document.getElementById("modalPercent");
+const modalTitle = document.getElementById("modalTitle");
+const modalSub = document.getElementById("modalSub");
 
 function switchTab(tab) {
     activeTab = tab;
@@ -99,6 +108,9 @@ async function startUploadProcess(event) {
 
     if (selectedUploadFiles.length === 0) return;
 
+    modalTitle.innerText = "Sending to host device";
+    modalSub.innerText = `Uploading ${selectedUploadFiles.length} item(s) to `;
+
     await uploadProcess();
 }
 
@@ -134,6 +146,7 @@ async function uploadProcess() {
     }
 }
 
+// render the files that has been selected to send
 function renderSelectedUploadList() {
     listContainer.innerHTML = "";
 
@@ -170,6 +183,7 @@ function renderSelectedUploadList() {
     });
 }
 
+// render the files that has been sended
 function renderRecentSentFiles() {
     if (recentSentFiles.length === 0) {
         recentContainer.classList.add("hidden");
@@ -253,8 +267,26 @@ function getFileIconName(fileName) {
     return "file";
 }
 
+function cancelTransfer() {}
+
 function renderSharedFiles() {}
 
+async function getConfigs() {
+    try {
+        const response = await fetch("/configs");
+
+        if (!response.ok) {
+            throw new Error(`http error :${response.status}`);
+        }
+
+        configuration = await response.json();
+        
+    } catch (error) {
+        console.error("failed to fetch configurations: ", error);
+    }
+}
+
 window.onload = function () {
+    getConfigs();
     removeSelectedFile();
 };
