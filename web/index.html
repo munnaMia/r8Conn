@@ -95,6 +95,29 @@
 
                 <!-- ================== DOWNLOAD SECTION ================== -->
                 <section id="sectionDownload" class="hidden">Section download</section>
+
+                <!-- Tansfer Model -->
+                <!-- // add hidden letter  -->
+                <div id="transferModal" class="modal-backdrop">
+                    <div class="modal-card">
+                        <div class="modal-icon-container">
+                            <img id="modalIcon" class="icon-img lg" src="assets/icons/upload.svg" alt="Transfer" />
+                        </div>
+
+                        <h4 id="modalTitle">Transferring Files</h4>
+                        <p id="modalSub">Sharing With The Host</p>
+
+                        <div class="progress-bar-container">
+                            <div id="modalProgressBar" class="progress-bar-fill"></div>
+                        </div>
+
+                        <div class="modal-percent-container">
+                            <span id="modalPercent">0%</span>
+                        </div>
+
+                        <button onclick="cancelTransfer()" class="btn-secondary cancelBtn">Cancel</button>
+                    </div>
+                </div>
             </main>
         </div>
 

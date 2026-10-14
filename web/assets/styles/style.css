@@ -220,6 +220,40 @@ body {
     display: none;
 }
 
+#sectionDownload {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#recentUploadsContainer {
+    border-top: 1pz solid var(--border-color);
+    padding-top: 12px;
+    margin-top: 8px;
+}
+
+#completedCount {
+    font-size: 0.75rem;
+    color: var(--emerald);
+    font-weight: 700;
+}
+
+#recentUploadsList {
+    max-height: 160px;
+    overflow-y: auto;
+}
+
+#modalTitle {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+#modalSub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
 .app-main {
     flex: 1;
     overflow-y: auto;
@@ -271,12 +305,6 @@ body {
     font-size: 0.7rem;
     color: var(--text-muted);
     margin-top: 4px;
-}
-
-#sectionDownload {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
 }
 
 .file-list {
@@ -339,21 +367,23 @@ body {
     transform: scale(0.99);
 }
 
-#recentUploadsContainer {
-    border-top: 1pz solid var(--border-color);
-    padding-top: 12px;
-    margin-top: 8px;
+.btn-secondary {
+    padding: 8px 12px;
+    background-color: var(--rose-light);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.1s;
 }
 
-#completedCount {
-    font-size: 0.75rem;
-    color: var(--emerald);
-    font-weight: 700;
-}
-
-#recentUploadsList {
-    max-height: 160px;
-    overflow-y: auto;
+.btn-secondary:hover {
+    background-color: var(--rose);
 }
 
 .file-item-card {
@@ -432,6 +462,57 @@ body {
 .btn-remove-file:hover {
     background-color: var(--rose-light);
     border-color: #fca5a5;
+}
+
+/* transfer model */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.modal-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 360px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    margin: auto;
+}
+
+.modal-icon-container {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 12px auto;
+    border-radius: var(--radius-md);
+    background-color: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-percent-container {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.cancelBtn {
+    margin: 16px auto 0 auto;
+    padding: 6px 16px;
 }
 
 @media (min-width: 640px) {
