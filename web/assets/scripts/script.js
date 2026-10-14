@@ -1,6 +1,7 @@
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 
 let selectedUploadFiles = [];
+let recentSentFiles = [];
 
 let fileFormats = {
     "file-image": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
@@ -20,6 +21,7 @@ let icons = {
     folder: "folder-open",
 };
 
+// tab section
 let activeTab = "upload";
 const tabUploadBtn = document.getElementById("tabUpload");
 const tabDownloadBtn = document.getElementById("tabDownload");
@@ -28,10 +30,16 @@ const downloadIcon = tabDownloadBtn.firstElementChild;
 const sectionUpload = document.getElementById("sectionUpload");
 const sectionDownload = document.getElementById("sectionDownload");
 
+// seleceted files section.
 const countText = document.getElementById("fileCountText");
 const uploadBtn = document.getElementById("uploadActionButton");
 const header = document.getElementById("selectedFilesHeader");
 const listContainer = document.getElementById("selectedFilesList");
+
+// recent upload section
+const recentContainer = document.getElementById("recentUploadsContainer");
+const recentUploadList = document.getElementById("recentUploadsList");
+const sentCount = document.getElementById("completedCount");
 
 function switchTab(tab) {
     activeTab = tab;
@@ -159,6 +167,32 @@ function renderSelectedUploadList() {
         `;
 
         listContainer.appendChild(containerEl);
+    });
+}
+
+function renderRecentSentFiles() {
+    if (recentSentFiles.length === 0) {
+        recentContainer.classList.add("hidden");
+        return;
+    }
+
+    recentContainer.classList.remove("hidden");
+    sentCount.innerText = `${recentSentFiles.length} items`;
+    recentUploadList.innerHTML = "";
+
+    recentSentFiles.forEach((file) => {
+        const item = document.createElement("div");
+        item.className = "file-item-card";
+        item.style.padding = "8px 12px";
+        item.innerHTML = `
+            <div class="file-info-group">
+                ${getIconImg(file.icon, "sm")}
+                <span class="file-name" style="font-size: 0.75rem;">${escapeHtml(file.name)}</span>
+            </div>
+            <span style="font-size:0.65rem; color: var(--emerald); font-weight: 700;">${file.formattedSize}</span>
+        `;
+
+        recentUploadList.appendChild(item);
     });
 }
 
