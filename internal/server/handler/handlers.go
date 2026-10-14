@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
@@ -30,9 +31,10 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 	chunkIdx, _ := strconv.Atoi(r.FormValue("chunkIdx"))
 	totalChunk, _ := strconv.Atoi(r.FormValue("totalChunk"))
 
-	fileExt := filepath.Ext(fileName)
-	fileNameWithoutExt := strings.TrimSuffix(fileName, fileExt)
-	uniqueFileName := fmt.Sprintf("%s_%s", fileNameWithoutExt, uploadId)
+	uniqueFileName := fmt.Sprintf("%s_%s",
+		strings.TrimSuffix(fileName, filepath.Ext(fileName)),
+		uploadId,
+	)
 
 	filePath := filepath.Join(h.config.StorageDir, uniqueFileName)
 
@@ -55,4 +57,16 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("chunk received"))
+}
+
+func (h *Handler) getConfigs(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	en := json.NewEncoder(w)
+
+	err := en.Encode(h.config)
+	if err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		return
+	}
 }
