@@ -50,6 +50,11 @@ const modalPercent = document.getElementById("modalPercent");
 const modalTitle = document.getElementById("modalTitle");
 const modalSub = document.getElementById("modalSub");
 const modalSize = document.getElementById("modalTransferSize");
+const modalClose = document.getElementById("modalCloseBtn");
+
+// toast elements
+const toastContainer = document.getElementById("toast");
+const toastMsg = document.getElementById("toastTitle");
 
 function switchTab(tab) {
     activeTab = tab;
@@ -110,7 +115,7 @@ async function startUploadProcess(event) {
     if (selectedUploadFiles.length === 0) return;
 
     modalTitle.innerText = "Sending to host device";
-    modalSub.innerText = `Uploading ${selectedUploadFiles.length} item(s) to ${configuration.storageDir}`;
+    // modalSub.innerText = `Uploading ${selectedUploadFiles.length} item(s) to ${configuration.storageDir}`;
     progressBar.style.width = "0%";
     modalPercent.innerText = "0%";
     modal.classList.remove("hidden");
@@ -164,8 +169,11 @@ async function uploadProcess() {
         }
     }
 
-    // hide modal and show toast
-    modal.classList.add("hidden");
+    // show close modal btn
+    modalClose.classList.remove("hidden");
+
+    // show toast massage
+    showToast(`Sent ${selectedUploadFiles.length} file(s) successfully`);
 
     // make files list empty after uploading all files
     selectedUploadFiles = [];
@@ -242,6 +250,20 @@ function renderTransferModal(percent, uploadedSize, totalSize) {
     progressBar.style.width = `${percent}%`;
     modalPercent.innerText = `${percent}%`;
     modalSize.innerText = `${uploadedSize}/${totalSize}`;
+}
+
+// close the modal
+function closeModal() {
+    modal.classList.add("hidden");
+}
+
+function showToast(msg) {
+    toastMsg.innerText = msg;
+    toastContainer.classList.add("show");
+
+    setTimeout(() => {
+        toastContainer.classList.remove("show");
+    }, 3000);
 }
 
 // get a icon for specific name
