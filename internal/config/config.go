@@ -5,14 +5,14 @@ import (
 )
 
 type Config struct {
-	Port        int
-	PreferredIP string
-	ShareDir    string
-	StorageDir  string
-	CLI         bool
-	AddSource   bool
-	Debug       bool
-	QrConfig    *qrterminal.Config
+	Port        int                `json:"port"`
+	PreferredIP string             `json:"ip"`
+	ShareDir    string             `json:"shareDir"`
+	StorageDir  string             `json:"storageDir"`
+	CLI         bool               `json:"-"`
+	AddSource   bool               `json:"-"`
+	Debug       bool               `json:"-"`
+	QrConfig    *qrterminal.Config `json:"-"`
 }
 
 // NewConfig return an instance of config struct with some default values
