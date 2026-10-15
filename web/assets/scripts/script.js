@@ -1,6 +1,6 @@
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 
-let configuration = {};
+let configuration;
 
 let selectedUploadFiles = [];
 let recentSentFiles = [];
@@ -49,6 +49,7 @@ const progressBar = document.getElementById("modalProgressBar");
 const modalPercent = document.getElementById("modalPercent");
 const modalTitle = document.getElementById("modalTitle");
 const modalSub = document.getElementById("modalSub");
+const modalSize = document.getElementById("modalTransferSize");
 
 function switchTab(tab) {
     activeTab = tab;
@@ -109,12 +110,24 @@ async function startUploadProcess(event) {
     if (selectedUploadFiles.length === 0) return;
 
     modalTitle.innerText = "Sending to host device";
-    modalSub.innerText = `Uploading ${selectedUploadFiles.length} item(s) to `;
+    modalSub.innerText = `Uploading ${selectedUploadFiles.length} item(s) to ${configuration.storageDir}`;
+    progressBar.style.width = "0%";
+    modalPercent.innerText = "0%";
+    modal.classList.remove("hidden");
 
     await uploadProcess();
 }
 
+// calculate the total uploaded file size
+function countBytesSize(files) {
+    return files.reduce((sum, item) => (sum += item.rawFile.size), 0);
+}
+
 async function uploadProcess() {
+    const totalBytesSize = countBytesSize(selectedUploadFiles);
+    const totalSizeFormated = formatBytes(totalBytesSize);
+    let uploadedBytes = 0;
+
     for (item of selectedUploadFiles) {
         let file = item.rawFile;
         let uploadID = item.id;
@@ -142,8 +155,19 @@ async function uploadProcess() {
                 console.error(`failed to upload ${chunkIdx} file name : ${file.name}`);
                 return;
             }
+
+            uploadedBytes += chunk.size;
+            const formatedUploadedSize = formatBytes(uploadedBytes);
+            const percent = totalBytesSize === 0 ? 100 : Math.floor((uploadedBytes / totalBytesSize) * 100);
+
+            renderTransferModal(percent, formatedUploadedSize, totalSizeFormated);
         }
     }
+
+    // make files list empty after uploading all files
+    selectedUploadFiles = [];
+    renderSelectedUploadList();
+    renderRecentSentFiles();
 }
 
 // render the files that has been selected to send
@@ -208,6 +232,13 @@ function renderRecentSentFiles() {
 
         recentUploadList.appendChild(item);
     });
+}
+
+// render the modal
+function renderTransferModal(percent, uploadedSize, totalSize) {
+    progressBar.style.width = `${percent}%`;
+    modalPercent.innerText = `${percent}%`;
+    modalSize.innerText = `${uploadedSize}/${totalSize}`;
 }
 
 // get a icon for specific name
@@ -280,7 +311,6 @@ async function getConfigs() {
         }
 
         configuration = await response.json();
-        
     } catch (error) {
         console.error("failed to fetch configurations: ", error);
     }

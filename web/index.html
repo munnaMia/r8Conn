@@ -97,8 +97,7 @@
                 <section id="sectionDownload" class="hidden">Section download</section>
 
                 <!-- Tansfer Model -->
-                <!-- // add hidden letter  -->
-                <div id="transferModal" class="modal-backdrop">
+                <div id="transferModal" class="modal-backdrop hidden">
                     <div class="modal-card">
                         <div class="modal-icon-container">
                             <img id="modalIcon" class="icon-img lg" src="assets/icons/upload.svg" alt="Transfer" />
@@ -113,6 +112,7 @@
 
                         <div class="modal-percent-container">
                             <span id="modalPercent">0%</span>
+                            <span id = "modalTransferSize">0/0</span>
                         </div>
 
                         <button onclick="cancelTransfer()" class="btn-secondary cancelBtn">Cancel</button>
