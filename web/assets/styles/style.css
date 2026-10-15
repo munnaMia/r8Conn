@@ -559,7 +559,7 @@ body {
 
 .closeBtn {
     padding: 8px 12px;
-    background-color: #c2c2c2;
+    background-color: #fff8f8;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-full);
     font-size: 0.85rem;
@@ -572,10 +572,11 @@ body {
     transition: 0.1s;
     margin: 16px auto 0 auto;
     padding: 6px 16px;
+    overflow: hidden;
 }
 
 .closeBtn:hover {
-    background-color: #707070;
+    background-color: #ffe6e6;
 }
 
 @media (min-width: 640px) {

@@ -115,7 +115,7 @@ async function startUploadProcess(event) {
     if (selectedUploadFiles.length === 0) return;
 
     modalTitle.innerText = "Sending to host device";
-    // modalSub.innerText = `Uploading ${selectedUploadFiles.length} item(s) to ${configuration.storageDir}`;
+    modalSub.innerText = `Uploading ${selectedUploadFiles.length} item(s) to ${configuration.storageDir}`;
     progressBar.style.width = "0%";
     modalPercent.innerText = "0%";
     modal.classList.remove("hidden");
