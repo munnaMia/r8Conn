@@ -530,11 +530,6 @@ body {
     border: none;
 }
 
-.cancelBtn {
-    margin: 16px auto 0 auto;
-    padding: 6px 16px;
-}
-
 @media (min-width: 640px) {
     body {
         padding: 20px;

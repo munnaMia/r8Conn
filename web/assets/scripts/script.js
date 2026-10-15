@@ -164,6 +164,9 @@ async function uploadProcess() {
         }
     }
 
+    // hide modal and show toast
+    modal.classList.add("hidden");
+
     // make files list empty after uploading all files
     selectedUploadFiles = [];
     renderSelectedUploadList();
