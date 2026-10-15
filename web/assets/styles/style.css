@@ -240,7 +240,6 @@ body {
 }
 
 #recentUploadsList {
-    max-height: 160px;
     overflow-y: auto;
 }
 
@@ -276,6 +275,7 @@ body {
     justify-content: center;
     flex-direction: column;
     transition: all 0.2s ease;
+    margin-bottom: 10px;
 }
 
 .drop-zone:hover,
@@ -313,7 +313,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-width: 300px;
 }
 
 .section-header {
@@ -553,7 +552,7 @@ body {
     opacity: 0;
 }
 
-.toast.show{
+.toast.show {
     opacity: 1;
 }
 

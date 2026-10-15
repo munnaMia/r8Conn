@@ -95,7 +95,7 @@ function handleFileSelect(event) {
 
         if (!exist) {
             selectedUploadFiles.push({
-                id: "UP_" + Date.now() + "_" + Math.random().toString(36).substring(2, 4),
+                id: "r8Conn_" + Date.now() + "_" + Math.random().toString(36).substring(2, 4),
                 name: file.name,
                 icon: getFileIconName(file.name),
                 size: file.size,
@@ -167,6 +167,8 @@ async function uploadProcess() {
 
             renderTransferModal(percent, formatedUploadedSize, totalSizeFormated);
         }
+
+        recentSentFiles.unshift(item);
     }
 
     // show close modal btn
@@ -229,19 +231,20 @@ function renderRecentSentFiles() {
     sentCount.innerText = `${recentSentFiles.length} items`;
     recentUploadList.innerHTML = "";
 
-    recentSentFiles.forEach((file) => {
-        const item = document.createElement("div");
-        item.className = "file-item-card";
-        item.style.padding = "8px 12px";
-        item.innerHTML = `
-            <div class="file-info-group">
-                ${getIconImg(file.icon, "sm")}
-                <span class="file-name" style="font-size: 0.75rem;">${escapeHtml(file.name)}</span>
-            </div>
-            <span style="font-size:0.65rem; color: var(--emerald); font-weight: 700;">${file.formattedSize}</span>
-        `;
-
-        recentUploadList.appendChild(item);
+    recentSentFiles.forEach((item) => {
+        const containerEl = document.createElement("div");
+        containerEl.className = "file-item-card";
+        containerEl.style.padding = "8px 12px";
+        containerEl.innerHTML = `
+                        <div class="file-info-group">
+                            ${getIconImg(item.icon, "sm")}
+                            <div class="file-name">${escapeHtml(item.name)}</div>
+                        </div>
+                        <span class="file-meta" style="font-size:0.65rem; color: var(--emerald); font-weight: 700;">${item.formatedSize}</span>
+                    `;
+                    
+                    console.log(containerEl)
+        recentUploadList.appendChild(containerEl);
     });
 }
 
@@ -255,6 +258,7 @@ function renderTransferModal(percent, uploadedSize, totalSize) {
 // close the modal
 function closeModal() {
     modal.classList.add("hidden");
+    modalClose.classList.add("hidden");
 }
 
 function showToast(msg) {
