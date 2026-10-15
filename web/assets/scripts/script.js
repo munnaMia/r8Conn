@@ -56,6 +56,7 @@ const modalClose = document.getElementById("modalCloseBtn");
 const toastContainer = document.getElementById("toast");
 const toastMsg = document.getElementById("toastTitle");
 
+// manage the tab switching
 function switchTab(tab) {
     activeTab = tab;
 
@@ -86,6 +87,7 @@ function switchTab(tab) {
     }
 }
 
+// handle the file selections
 function handleFileSelect(event) {
     const files = Array.from(event.target.files);
     if (files.length === 0) return;
@@ -109,6 +111,7 @@ function handleFileSelect(event) {
     event.target.value = "";
 }
 
+// begin the upload process
 async function startUploadProcess(event) {
     event.preventDefault();
 
@@ -128,6 +131,7 @@ function countBytesSize(files) {
     return files.reduce((sum, item) => (sum += item.rawFile.size), 0);
 }
 
+// manage the upload process
 async function uploadProcess() {
     const totalBytesSize = countBytesSize(selectedUploadFiles);
     const totalSizeFormated = formatBytes(totalBytesSize);
@@ -242,8 +246,8 @@ function renderRecentSentFiles() {
                         </div>
                         <span class="file-meta" style="font-size:0.65rem; color: var(--emerald); font-weight: 700;">${item.formatedSize}</span>
                     `;
-                    
-                    console.log(containerEl)
+
+        console.log(containerEl);
         recentUploadList.appendChild(containerEl);
     });
 }
@@ -347,5 +351,6 @@ async function getConfigs() {
 
 window.onload = function () {
     getConfigs();
-    removeSelectedFile();
+    renderSelectedUploadList();
+    renderRecentSentFiles();
 };

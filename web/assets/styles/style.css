@@ -589,6 +589,14 @@ body {
         border-radius: 20px;
         border: 1px solid var(--border-color);
         box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+        min-width: 500px;
+    }
+
+    .file-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 10px;
+        max-width: none;
     }
 }
 
@@ -601,15 +609,5 @@ body {
     }
     .moto-title {
         font-size: 0.68rem;
-    }
-}
-
-/* Adaptive 2-column layout on wider screens */
-@media (min-width: 640px) {
-    .file-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 10px;
-        max-width: none;
     }
 }
