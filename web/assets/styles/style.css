@@ -20,6 +20,7 @@
     --amber: #f59e0b;
     --amber-light: #fef3c7;
     --rose: #ef4444;
+    --rose-seconday: #f47a7a;
     --rose-light: #fee2e2;
     --text-main: #0f172a;
     --text-secondary: #2b2f36;
@@ -528,6 +529,53 @@ body {
     width: 0%;
     height: 100%;
     border: none;
+}
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    transform: translateX(-50%), translateY(100px);
+    background-color: #0f172a;
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.toast.show{
+    opacity: 1;
+}
+
+.closeBtn {
+    padding: 8px 12px;
+    background-color: #c2c2c2;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.1s;
+    margin: 16px auto 0 auto;
+    padding: 6px 16px;
+}
+
+.closeBtn:hover {
+    background-color: #707070;
 }
 
 @media (min-width: 640px) {
