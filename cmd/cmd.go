@@ -26,15 +26,6 @@ func Run() {
 	defer cleanUp()
 	slog.SetDefault(lg)
 
-	// get a default storage location to store uploaded file. if not provided
-	if cfg.StorageDir == "" {
-		cfg.StorageDir, err = utils.GetDownloadsPath()
-		if err != nil {
-			slog.Error("failed to get a download path", "error", err)
-			return
-		}
-	}
-
 	// initialized a new application handler
 	h := handler.NewHandler(cfg)
 
@@ -47,5 +38,4 @@ func Run() {
 	} else {
 		// run the GUI mode
 	}
-
 }

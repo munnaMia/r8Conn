@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 )
 
+// return the download path of system
 func GetDownloadsPath() (string, error) {
 	hmDir, err := os.UserHomeDir()
 	if err != nil {
@@ -19,4 +20,14 @@ func GetDownloadsPath() (string, error) {
 	}
 
 	return downloadDir, nil
+}
+
+// return bool if a given path is a directory and exists
+func IsDir(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return info.IsDir()
+	}
+
+	return false
 }
