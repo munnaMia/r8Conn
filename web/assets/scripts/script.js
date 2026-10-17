@@ -343,7 +343,8 @@ async function getConfigs() {
             throw new Error(`http error :${response.status}`);
         }
 
-        configuration = await response.json();
+        res = await response.json();
+        configuration= res.data
     } catch (error) {
         console.error("failed to fetch configurations: ", error);
     }
