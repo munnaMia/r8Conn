@@ -389,6 +389,25 @@ body {
     background-color: var(--rose);
 }
 
+.btn-icon-square {
+    padding: 8px 12px;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.1s;
+}
+
+.btn-icon-square:hover {
+    background-color: var(--primary-light);
+}
+
 .file-item-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -578,6 +597,84 @@ body {
     background-color: #ffe6e6;
 }
 
+.item-summary-container {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 0 4px;
+}
+
+#selectedDownloadCountText {
+    color: var(--primary);
+}
+
+.download-btn-container {
+    position: sticky;
+    bottom: 0;
+    padding-top: 8px;
+}
+
+.breadcrumb-bar {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+    gap: 8px;
+}
+
+.breadcrumb-trail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    overflow-y: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    flex: 1;
+    min-width: 0;
+}
+
+.search-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    flex: 1;
+    min-width: 160px;
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-main);
+    font-size: 0.8rem;
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: var(--primary);
+}
+
+.search-box .icon-img {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+}
+
 @media (min-width: 640px) {
     body {
         padding: 20px;
@@ -609,5 +706,21 @@ body {
     }
     .moto-title {
         font-size: 0.68rem;
+    }
+}
+
+/* Short Height / Landscape Optimization */
+@media (max-height: 600px) {
+    .app-container {
+        height: 100vh;
+        border-radius: 0;
+    }
+    .drop-zone {
+        padding: 14px 12px;
+    }
+    .drop-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 6px;
     }
 }
