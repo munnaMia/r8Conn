@@ -13,6 +13,7 @@ import (
 	"github.com/munnaMia/r8Conn/internal/network"
 	"github.com/munnaMia/r8Conn/internal/server"
 	"github.com/munnaMia/r8Conn/internal/server/handler"
+	"github.com/munnaMia/r8Conn/utils"
 )
 
 type ErrMsg error
@@ -79,7 +80,7 @@ type model struct {
 }
 
 func (m model) Init() tea.Cmd {
-	return m.InitServer
+	return m.InitTuiApp
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -100,7 +101,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "r":
 			if m.err != nil {
 				m.err = nil
-				return m, m.InitServer
+				return m, m.InitTuiApp
 			}
 		}
 	}
@@ -134,11 +135,34 @@ func (m model) View() string {
 	return appBox.Render(content)
 }
 
-func (m model) InitServer() tea.Msg {
-	if err := network.InitializeAddr(m.config); err != nil {
+func (m model) InitTuiApp() tea.Msg {
+	var err error
+
+	if err = network.InitializeAddr(m.config); err != nil {
 		slog.Error("failed to initialized network ip and port", "error", err)
 		return ErrMsg(errors.New("Connect with a WIFI or a Local Area Network"))
 
+	}
+
+	if m.config.StorageDir != "" {
+		if ok := utils.IsDir(m.config.StorageDir); !ok {
+			return ErrMsg(errors.New("Given upload location not exists try another one"))
+		}
+	}
+
+	if m.config.ShareDir != "" {
+		if ok := utils.IsDir(m.config.ShareDir); !ok {
+			return ErrMsg(errors.New("Given download location not exists try another one"))
+		}
+	}
+
+	// get a default storage location to store uploaded file. if not provided
+	if m.config.StorageDir == "" {
+		m.config.StorageDir, err = utils.GetDownloadsPath()
+		if err != nil {
+			slog.Error("failed to get a download path", "error", err)
+			return ErrMsg(errors.New("Failed to get a default upload location. \n please select one using flag -upd"))
+		}
 	}
 
 	addr := network.FormatBindPort(m.config.Port)

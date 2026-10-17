@@ -41,4 +41,9 @@ Double-click the compiled `r8Conn` executable. A desktop interface will open dis
 #### **CLI Mode (Terminal)**
 To run headless inside your terminal:
 ```bash
+# To start the CLI mode, execute:
 ./r8Conn --cli
+
+# To see all available options:
+./r8Conn --help
+```

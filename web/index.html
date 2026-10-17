@@ -45,44 +45,44 @@
             <main class="app-main">
                 <!-- ================== UPLOAD SECTION ================== -->
                 <section id="sectionUpload">
-                    <!-- File Dropzone -->
-                    <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
-                        <input type="file" name="files" multiple id="fileInput" onchange="handleFileSelect(event)" />
+                    <form action="" method="post" onsubmit="startUploadProcess(event)">
+                        <!-- File Dropzone -->
+                        <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
+                            <input type="file" name="files" multiple id="fileInput" onchange="handleFileSelect(event)" />
 
-                        <div class="drop-icon-wrapper">
-                            <img class="icon-img lg muted-icon" src="assets/icons/plus.svg" alt="add files" />
+                            <div class="drop-icon-wrapper">
+                                <img class="icon-img lg muted-icon" src="assets/icons/plus.svg" alt="add files" />
+                            </div>
+
+                            <h3 class="drop-title">Select files to send</h3>
+                            <p class="drop-sub">Drag or Tap to choose documents and more.</p>
                         </div>
 
-                        <h3 class="drop-title">Select files to send</h3>
-                        <p class="drop-sub">Drag or Tap to choose documents and more.</p>
-                    </div>
+                        <div id="selectedFilesHeader" class="section-header hidden">
+                            <span class="section-title">
+                                <img class="icon-img sm muted-icon" src="assets/icons/box-open-full.svg" alt="Queue" />
+                                Queue (<span id="fileCountText">0</span>)
+                            </span>
+                            <button class="btn-text-danger" onclick="clearAllSeleceted()">
+                                <img class="icon-img sm danger-icon" src="assets/icons/trash-check.svg" alt="Trash" />
+                                Clear all
+                            </button>
+                        </div>
 
-                    <!-- letter make it hidden -->
-                    <div id="selectedFilesHeader" class="section-header">
-                        <span class="section-title">
-                            <img class="icon-img sm muted-icon" src="assets/icons/box-open-full.svg" alt="Queue" />
-                            Queue (<span id="fileCountText">0</span>)
-                        </span>
-                        <button class="btn-text-danger" onclick="clearAllSeleceted()">
-                            <img class="icon-img sm danger-icon" src="assets/icons/trash-check.svg" alt="Trash" />
-                            Clear all
-                        </button>
-                    </div>
+                        <!-- seleted files list  -->
+                        <div id="selectedFilesList" class="file-list"></div>
 
-                    <!-- seleted files list  -->
-                    <div id="selectedFilesList" class="file-list"></div>
-
-                    <!-- letter make this button also hidden  -->
-                    <div>
-                        <button class="btn-primary-block" id="uploadActionButton" onclick="startUploadProcess()">
-                            <img class="icon-img md white-icon" src="assets/icons/folder-open.svg" alt="upload" />
-                            <span>Upload Files</span>
-                        </button>
-                    </div>
+                        <!-- letter make this button also hidden  -->
+                        <div>
+                            <button class="btn-primary-block hidden" id="uploadActionButton" type="submit">
+                                <img class="icon-img md white-icon" src="assets/icons/upload.svg" alt="upload" />
+                                <span>Upload Files</span>
+                            </button>
+                        </div>
+                    </form>
 
                     <!-- upload history -->
-                    <!-- leeter make this also hidden  -->
-                    <div id="recentUploadsContainer" class="">
+                    <div id="recentUploadsContainer" class="hidden">
                         <div class="section-header" style="margin-bottom: 8px">
                             <span class="section-title">
                                 <img class="icon-img sm muted-icon" src="assets/icons/clock-five.svg" alt="clock" />
@@ -90,16 +90,84 @@
                             </span>
                             <span id="completedCount">0 items</span>
                         </div>
-                        <div id="recentUploadsList" class="file-list"></div>
                     </div>
+                    <div id="recentUploadsList" class="file-list"></div>
                 </section>
 
                 <!-- ================== DOWNLOAD SECTION ================== -->
-                <section id="sectionDownload" class="hidden">Section download</section>
-            </main>
+                <section id="sectionDownload" class="hidden">
+                    <!-- Breadcurmb-bar -->
+                    <div class="breadcrumb-bar">
+                        <div class="breadcrumb-trail" id="breadcrumbContainer"></div>
+                        <div style="display: flex; gap: 4px">
+                            <!-- add hidden letter  -->
+                            <button id="upDirctoryBtn" onclick="navigateUpDirectory()" title="Parent Directory" class="btn-icon-square">
+                                <img src="assets/icons/arrow-small-up.svg" class="icon-img md" alt="Up" />
+                            </button>
 
-            <!-- footer -->
-            <footer>This is footer</footer>
+                            <button onclick="renderSharedFiles()" title="Refresh Folder" class="btn-icon-square">
+                                <img class="icon-img md" src="assets/icons/refresh.svg" alt="Refresh" />
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search bar and controls -->
+                    <div class="search-row">
+                        <div class="search-box">
+                            <img class="icon-img sm" src="assets/icons/search.svg" alt="Search" />
+                            <input type="text" name="search" oninput="filterSharedFiles()" id="searchInput" placeholder="Search here..." />
+                        </div>
+                        <button onclick="toggleSelectAllShared()" class="btn-secondary">Select All</button>
+                    </div>
+
+                    <!-- items summary -->
+                    <div class="item-summary-container">
+                        <span>Items in folder (<span id="sharedItemCount">0</span>)</span>
+                        <!-- add hidden latter -->
+                        <span id="selectedDownloadCountText">0 seleted</span>
+                    </div>
+
+                    <!-- shared files list -->
+                    <div id="sharedFilesList" class="file-list"></div>
+
+                    <!-- download btn -->
+                    <div class="download-btn-container">
+                        <button disabled id="downloadNowBtn" onclick="downloadSeletedFiles()" class="btn-primary-block">
+                            <img class="icon-img white-icon md" src="assets/icons/download.svg" alt="Download" />
+                            <span id="downloadBtnText">Select files to download</span>
+                        </button>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Tansfer Model -->
+        <div id="transferModal" class="modal-backdrop hidden">
+            <div class="modal-card">
+                <div class="modal-icon-container">
+                    <img id="modalIcon" class="icon-img lg" src="assets/icons/upload.svg" alt="Transfer" />
+                </div>
+
+                <h4 id="modalTitle">Transferring Files</h4>
+                <p id="modalSub">Sharing With The Host</p>
+
+                <div class="progress-bar-container">
+                    <div id="modalProgressBar" class="progress-bar-fill"></div>
+                </div>
+
+                <div class="modal-percent-container">
+                    <span id="modalPercent">0%</span>
+                    <span id="modalTransferSize">0/0</span>
+                </div>
+
+                <button class="closeBtn hidden" id="modalCloseBtn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+
+        <!-- Toast Notification Popup -->
+        <div id="toast" class="toast">
+            <img id="toastIcon" class="icon-img md white-icon" src="assets/icons/bell.svg" alt="toast" />
+            <span id="toastTitle">Notification</span>
         </div>
 
         <script src="assets/scripts/script.js" defer></script>
