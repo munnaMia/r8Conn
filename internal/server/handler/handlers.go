@@ -59,12 +59,29 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("chunk received"))
 }
 
+// func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
+// 	files := make([]File, 0)
+
+// 	if h.config.ShareDir == "" {
+// 		http.Error(w, "folder not selected to share", http.StatusNotFound)
+// 		return
+// 	}
+
+// 	filepath.ex
+// }
+
 func (h *Handler) getConfigs(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	en := json.NewEncoder(w)
 
-	err := en.Encode(h.config)
+	res := SuccessResponse{
+		Msg:    "Application configuration",
+		Data:   h.config,
+		Status: http.StatusOK,
+	}
+
+	err := en.Encode(res)
 	if err != nil {
 		http.Error(w, "failed to encode json", http.StatusInternalServerError)
 		return

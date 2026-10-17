@@ -144,15 +144,6 @@ func (m model) InitTuiApp() tea.Msg {
 
 	}
 
-	// get a default storage location to store uploaded file. if not provided
-	if m.config.StorageDir == "" {
-		m.config.StorageDir, err = utils.GetDownloadsPath()
-		if err != nil {
-			slog.Error("failed to get a download path", "error", err)
-			return ErrMsg(errors.New("Failed to get a default upload location. \n please select one using flag -upd"))
-		}
-	}
-
 	if m.config.StorageDir != "" {
 		if ok := utils.IsDir(m.config.StorageDir); !ok {
 			return ErrMsg(errors.New("Given upload location not exists try another one"))
@@ -162,6 +153,15 @@ func (m model) InitTuiApp() tea.Msg {
 	if m.config.ShareDir != "" {
 		if ok := utils.IsDir(m.config.ShareDir); !ok {
 			return ErrMsg(errors.New("Given download location not exists try another one"))
+		}
+	}
+
+	// get a default storage location to store uploaded file. if not provided
+	if m.config.StorageDir == "" {
+		m.config.StorageDir, err = utils.GetDownloadsPath()
+		if err != nil {
+			slog.Error("failed to get a download path", "error", err)
+			return ErrMsg(errors.New("Failed to get a default upload location. \n please select one using flag -upd"))
 		}
 	}
 
