@@ -331,9 +331,15 @@ function getFileIconName(fileName) {
     return "file";
 }
 
-function cancelTransfer() {}
+function navigateUpDirectory() {}
 
 function renderSharedFiles() {}
+
+function filterSharedFiles(){}
+
+function toggleSelectAllShared(){}
+
+function downloadSeletedFiles(){}
 
 async function getConfigs() {
     try {
