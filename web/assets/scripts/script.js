@@ -23,7 +23,7 @@ let icons = {
     folder: "folder-open",
 };
 
-// tab section
+// tab sections elements
 let activeTab = "upload";
 const tabUploadBtn = document.getElementById("tabUpload");
 const tabDownloadBtn = document.getElementById("tabDownload");
@@ -31,6 +31,9 @@ const uploadIcon = tabUploadBtn.firstElementChild;
 const downloadIcon = tabDownloadBtn.firstElementChild;
 const sectionUpload = document.getElementById("sectionUpload");
 const sectionDownload = document.getElementById("sectionDownload");
+
+// drop zone section
+const dropZone = document.getElementById("dropZone");
 
 // seleceted files section.
 const countText = document.getElementById("fileCountText");
@@ -335,11 +338,11 @@ function navigateUpDirectory() {}
 
 function renderSharedFiles() {}
 
-function filterSharedFiles(){}
+function filterSharedFiles() {}
 
-function toggleSelectAllShared(){}
+function toggleSelectAllShared() {}
 
-function downloadSeletedFiles(){}
+function downloadSeletedFiles() {}
 
 async function getConfigs() {
     try {
@@ -350,11 +353,37 @@ async function getConfigs() {
         }
 
         res = await response.json();
-        configuration= res.data
+        configuration = res.data;
     } catch (error) {
         console.error("failed to fetch configurations: ", error);
     }
 }
+
+// handle drag and drop feature for file upload
+["dragenter", "dragover"].forEach((eventName) => {
+    dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+    });
+});
+
+["dragleave", "drop"].forEach((eventName) => {
+    dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+    });
+});
+
+dropZone.addEventListener("drop", (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        handleFileSelect({
+            target: {
+                files: files,
+            },
+        });
+    }
+});
 
 window.onload = function () {
     getConfigs();

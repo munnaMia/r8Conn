@@ -389,6 +389,26 @@ body {
     background-color: var(--rose);
 }
 
+.btn-secondary-block {
+    padding: 8px 12px;
+    background-color: var(--primary-light);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.1s;
+}
+
+.btn-secondary-block:hover {
+    background-color: var(--primary);
+    color: #fff5f5;
+}
+
 .btn-icon-square {
     padding: 8px 12px;
     background-color: var(--bg-subtle);
