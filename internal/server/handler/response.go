@@ -1,5 +1,12 @@
 package handler
 
+type Directory struct {
+	Name        string      `json:"name"`
+	Path        string      `json:"path"`
+	Files       []File      `json:"files"`
+	Directories []Directory `json:"directories"`
+}
+
 type File struct {
 	Name string `json:"name"`
 	Path string `json:"path"`
