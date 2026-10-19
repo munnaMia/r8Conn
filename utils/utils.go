@@ -1,20 +1,16 @@
 package utils
 
 import (
+	"log/slog"
 	"os"
 	"path/filepath"
 )
 
 // return the download path of system
-func GetDownloadsPath() (string, error) {
-	hmDir, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
+func GetDownloadsPath(baseDir string) (string, error) {
+	downloadDir := filepath.Join(baseDir, "Downloads", "r8Conn")
 
-	downloadDir := filepath.Join(hmDir, "Downloads", "r8Conn")
-
-	err = os.MkdirAll(downloadDir, 0755)
+	err := os.MkdirAll(downloadDir, 0755)
 	if err != nil {
 		return "", err
 	}
@@ -23,11 +19,14 @@ func GetDownloadsPath() (string, error) {
 }
 
 // return bool if a given path is a directory and exists
-func IsDir(path string) bool {
-	info, err := os.Stat(path)
+func IsDir(baseDir, path string) bool {
+	filePath := filepath.Join(baseDir, path)
+
+	info, err := os.Stat(filePath)
 	if err != nil {
-		return info.IsDir()
+		slog.Error("failed to check path", "error", err)
+		return false
 	}
 
-	return false
+	return info.IsDir()
 }
