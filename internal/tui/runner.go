@@ -137,6 +137,7 @@ func (m model) View() string {
 
 func (m model) InitTuiApp() tea.Msg {
 	var err error
+	var ok bool
 
 	if err = network.InitializeAddr(m.config); err != nil {
 		slog.Error("failed to initialized network ip and port", "error", err)
@@ -145,13 +146,15 @@ func (m model) InitTuiApp() tea.Msg {
 	}
 
 	if m.config.StorageDir != "" {
-		if ok := utils.IsDir(m.config.BaseDir, m.config.StorageDir); !ok {
+		m.config.StorageDir, ok = utils.IsDir(m.config.BaseDir, m.config.StorageDir)
+		if !ok {
 			return ErrMsg(errors.New("Given upload location not exists try another one"))
 		}
 	}
 
 	if m.config.ShareDir != "" {
-		if ok := utils.IsDir(m.config.BaseDir, m.config.ShareDir); !ok {
+		m.config.ShareDir, ok = utils.IsDir(m.config.BaseDir, m.config.ShareDir)
+		if !ok {
 			return ErrMsg(errors.New("Given download location not exists try another one"))
 		}
 	}

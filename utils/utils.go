@@ -19,14 +19,14 @@ func GetDownloadsPath(baseDir string) (string, error) {
 }
 
 // return bool if a given path is a directory and exists
-func IsDir(baseDir, path string) bool {
+func IsDir(baseDir, path string) (string, bool) {
 	filePath := filepath.Join(baseDir, path)
 
 	info, err := os.Stat(filePath)
 	if err != nil {
 		slog.Error("failed to check path", "error", err)
-		return false
+		return "", false
 	}
 
-	return info.IsDir()
+	return filePath, info.IsDir()
 }
