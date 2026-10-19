@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/munnaMia/r8Conn/utils"
 )
 
 func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
@@ -62,12 +64,12 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {}
 
 func (h *Handler) getFilesInfo(w http.ResponseWriter, r *http.Request) {
-	// var res SuccessResponse
-	var err error
+	w.Header().Set("Content-Type", "application/json")
+
 	en := json.NewEncoder(w)
 
 	if h.config.ShareDir == "" {
-		err = en.Encode(ErrorResponse{
+		err := en.Encode(ErrorResponse{
 			Msg:    "Select a directory to share",
 			Status: http.StatusNoContent,
 		})
@@ -77,6 +79,14 @@ func (h *Handler) getFilesInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err := en.Encode(SuccessResponse{
+		Msg:    "Share directory file tree",
+		Data:   utils.GetFileTree(h.config.ShareDir),
+		Status: http.StatusOK,
+	})
+	if err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+	}
 }
 
 func (h *Handler) getConfigs(w http.ResponseWriter, r *http.Request) {
