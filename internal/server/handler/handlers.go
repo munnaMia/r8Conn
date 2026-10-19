@@ -79,9 +79,22 @@ func (h *Handler) getFilesInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := en.Encode(SuccessResponse{
+	fileTree, err := utils.GetFileTree(h.config.ShareDir)
+	if err != nil {
+		slog.Error("failed to parse file tree", "error", err)
+		err := en.Encode(ErrorResponse{
+			Msg:    "failed to read share directory",
+			Status: http.StatusInternalServerError,
+		})
+		if err != nil {
+			http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	err = en.Encode(SuccessResponse{
 		Msg:    "Share directory file tree",
-		Data:   utils.GetFileTree(h.config.ShareDir),
+		Data:   fileTree,
 		Status: http.StatusOK,
 	})
 	if err != nil {
@@ -94,13 +107,11 @@ func (h *Handler) getConfigs(w http.ResponseWriter, r *http.Request) {
 
 	en := json.NewEncoder(w)
 
-	res := SuccessResponse{
+	err := en.Encode(SuccessResponse{
 		Msg:    "Application configuration",
 		Data:   h.config,
 		Status: http.StatusOK,
-	}
-
-	err := en.Encode(res)
+	})
 	if err != nil {
 		http.Error(w, "failed to encode json", http.StatusInternalServerError)
 		return
