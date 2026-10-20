@@ -3,8 +3,10 @@ const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 let configuration;
 
 let selectedUploadFiles = [];
-let sharedFiles;
 let recentSentFiles = [];
+
+let sharedFiles;
+let currentDirIndex = 0; // for breadcrumb
 
 let fileFormats = {
     "file-image": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
@@ -159,7 +161,7 @@ const dropZone = document.getElementById("dropZone");
 const countText = document.getElementById("fileCountText");
 const uploadBtn = document.getElementById("uploadActionButton");
 const header = document.getElementById("selectedFilesHeader");
-const listContainer = document.getElementById("selectedFilesList");
+const listSeletedContainer = document.getElementById("selectedFilesList");
 
 // recent upload section
 const recentContainer = document.getElementById("recentUploadsContainer");
@@ -178,6 +180,10 @@ const modalClose = document.getElementById("modalCloseBtn");
 // toast elements
 const toastContainer = document.getElementById("toast");
 const toastMsg = document.getElementById("toastTitle");
+
+// download tab elements
+const listSharedContainer = document.getElementById("sharedFilesList");
+const itemCountText = document.getElementById;
 
 // manage the tab switching
 function switchTab(tab) {
@@ -307,7 +313,7 @@ async function uploadProcess() {
 
 // render the files that has been selected to send
 function renderSelectedUploadList() {
-    listContainer.innerHTML = "";
+    listSeletedContainer.innerHTML = "";
 
     if (selectedUploadFiles.length === 0) {
         header.classList.add("hidden");
@@ -338,7 +344,7 @@ function renderSelectedUploadList() {
                         </button>
         `;
 
-        listContainer.appendChild(containerEl);
+        listSeletedContainer.appendChild(containerEl);
     });
 }
 
@@ -480,6 +486,22 @@ async function getSharedFiles() {
     } catch (error) {
         console.error("failed to fetch configurations: ", error);
     }
+
+    formatedSharedFilesPath();
+}
+
+// add a new field for path array for each file breadcremb
+function formatedSharedFilesPath() {
+    sharedFiles.forEach((file) => {
+        file["dirList"] = getDirList(file.path);
+    });
+}
+
+// subtract all the folders name and remove file names and return an array
+function getDirList(path) {
+    let pathArr = path.toString().replace(/\\/g, "/").split("/").pop();
+    pathArr.pop();
+    return pathArr;
 }
 
 async function getConfigs() {
