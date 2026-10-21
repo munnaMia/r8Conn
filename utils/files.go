@@ -9,6 +9,7 @@ import (
 )
 
 type File struct {
+	Id   int    `json:"id"`
 	Name string `json:"name"`
 	Path string `json:"path"`
 	Size int64  `json:"size"`
@@ -27,6 +28,7 @@ func GetFileTree(root string) ([]File, error) {
 	}
 
 	files := make([]File, 0)
+	customId := 0
 
 	err = filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -38,10 +40,12 @@ func GetFileTree(root string) ([]File, error) {
 			f, _ := d.Info()
 
 			files = append(files, File{
+				Id:   customId,
 				Name: d.Name(),
 				Path: relPath,
 				Size: f.Size(),
 			})
+			customId++
 		}
 
 		return nil

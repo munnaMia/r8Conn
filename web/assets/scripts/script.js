@@ -9,117 +9,140 @@ let recentSentFiles = [];
 // remove test data and fetch from api latter
 let sharedFiles = [
     {
+        id: 0,
         name: "Screenshot From 2026-10-08 13-11-32.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-08 13-11-32.png",
         size: 76023,
     },
 
     {
+        id: 1,
         name: "Screenshot From 2026-10-14 15-36-47.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-14 15-36-47.png",
         size: 101366,
     },
     {
+        id: 2,
         name: "Screenshot From 2026-10-15 13-44-31.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-15 13-44-31.png",
         size: 50374,
     },
     {
+        id: 3,
         name: "Screenshot From 2026-10-15 14-13-49.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-15 14-13-49.png",
         size: 29241,
     },
     {
+        id: 4,
         name: "Screenshot From 2026-10-15 15-25-54.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-15 15-25-54.png",
         size: 21327,
     },
     {
+        id: 5,
         name: "Screenshot From 2026-10-15 22-24-45.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-24-45.png",
         size: 382464,
     },
     {
+        id: 6,
         name: "Screenshot From 2026-10-15 22-49-39.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-49-39.png",
         size: 276267,
     },
     {
+        id: 7,
         name: "Screenshot From 2026-10-15 23-04-48.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-15 23-04-48.png",
         size: 419692,
     },
     {
+        id: 8,
         name: "Screenshot From 2026-10-16 10-40-13.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-40-13.png",
         size: 738011,
     },
     {
+        id: 77,
         name: "Screenshot From 2026-10-16 10-41-06.png",
         path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-41-06.png",
         size: 521173,
     },
     {
+        id: 55,
         name: "Screenshot From 2026-10-07 11-36-54.png",
         path: "Screenshot From 2026-10-07 11-36-54.png",
         size: 35916,
     },
     {
+        id: 56,
         name: "Screenshot From 2026-10-08 11-43-51.png",
         path: "Screenshot From 2026-10-08 11-43-51.png",
         size: 37754,
     },
     {
+        id: 58,
         name: "System Analysis concept.1st week.pdf",
         path: "university document/System Analysis concept.1st week.pdf",
         size: 176037,
     },
     {
+        id: 59,
         name: "case study 3rd week SDLC.pdf",
         path: "university document/case study 3rd week SDLC.pdf",
         size: 187407,
     },
     {
+        id: 12,
         name: "ch3_1_v1.ppt (1).pdf",
         path: "university document/ch3_1_v1.ppt (1).pdf",
         size: 2332978,
     },
     {
+        id: 13,
         name: "ch3_1_v1.ppt.pdf",
         path: "university document/ch3_1_v1.ppt.pdf",
         size: 2332978,
     },
     {
+        id: 14,
         name: "ch3_2_v1.ppt.pdf",
         path: "university document/ch3_2_v1.ppt.pdf",
         size: 995171,
     },
     {
+        id: 15,
         name: "ch3_3_v1.ppt.pdf",
         path: "university document/ch3_3_v1.ppt.pdf",
         size: 855704,
     },
     {
+        id: 25,
         name: "ch3_4_v1.ppt.pdf",
         path: "university document/ch3_4_v1.ppt.pdf",
         size: 522412,
     },
     {
+        id: 26,
         name: "ch3_5_v1.ppt.pdf",
         path: "university document/ch3_5_v1.ppt.pdf",
         size: 659263,
     },
     {
+        id: 36,
         name: "system analysis 2nd week (1).pdf",
         path: "university document/system analysis 2nd week (1).pdf",
         size: 275087,
     },
     {
+        id: 446,
         name: "system analysis 2nd week.pdf",
         path: "university document/system analysis 2nd week.pdf",
         size: 275087,
     },
 ];
+let hasSelectedDownloadIds = new Set();
 
 let fileFormats = {
     "file-image": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
@@ -449,14 +472,53 @@ function showToast(msg) {
 // // download tab elements
 const listSharedContainer = document.getElementById("sharedFilesList");
 const itemCountText = document.getElementById("sharedItemCount");
+const downloadBtn = document.getElementById("downloadNowBtn");
 
 function renderSharedFiles() {
     renderBreadcrumbs();
 
+    listSharedContainer.innerHTML = "";
+    itemCountText.innerText = sharedFiles.length;
+
     if (sharedFiles.length === 0) {
+        downloadBtn.classList.add("hidden");
+
+        listSharedContainer.innerHTML = `
+            <div class="no-content" id="noContent">
+                <span class="no-content-msg">No folder has been seleted</span>
+                <p class="no-content-smsg">Go to App setting or use CLI flags</p>
+            </div>
+        `;
+
+        return;
     }
-    // get the files list from api and render them
-    // render them here
+
+    downloadBtn.classList.remove("hidden");
+    const curDirInfo = getCurrentDirectoryInfo();
+    let itemToShow = sharedFiles.filter((f) => f.dirList[curDirInfo.dir_level] === curDirInfo.name);
+    // curDirInfo.dir_level  < file.dirList.length-1
+    let subFolders = new Set();
+    itemToShow.forEach((f) => {
+        if (curDirInfo.dir_level < f.dirList.length - 1) {
+            subFolders.add(f.dirList[curDirInfo.dir_level + 1]);
+        }
+    });
+    console.log(subFolders)
+
+    itemToShow.forEach((file) => {
+        const isSeleted = hasSelectedDownloadIds.has(file.id);
+        const card = document.createElement("div");
+        card.className = "file-item-card";
+
+        if (isSeleted) {
+            card.style.borderColor = "var(--primary)";
+            card.style.backgroundColor = "var(--primary-light)";
+        }
+
+        // render folder first
+
+        // render file secound
+    });
 }
 
 // return info about current dir name and its level
@@ -484,7 +546,7 @@ function renderBreadcrumbs() {
         if (isLast) {
             html += `<span class="breadcrumb-node current">${escapeHtml(folder)}</span>`;
         } else {
-            html += `<span class="breadcrumb-node" onclick="navigateUpDirectory(${index})">${escapeHtml(folder)}</span>`;
+            html += `<span class="breadcrumb-node" onclick="navigateToBreadCrumb(${index})">${escapeHtml(folder)}</span>`;
         }
     });
 
@@ -497,10 +559,11 @@ function renderBreadcrumbs() {
     }
 }
 
+// pop one folder from breadcrumb and render shared files
 function navigateUpDirectory() {}
 
-// up directory function
-function navigateUpDirectory(index) {}
+// navigate through the breadcrumb directory path
+function navigateToBreadCrumb(index) {}
 
 function filterSharedFiles() {}
 
