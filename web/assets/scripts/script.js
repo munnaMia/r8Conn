@@ -1,6 +1,6 @@
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 const Dir_Level = 0; // 0 mean root level
-let breadcrumb = ["/"]; // level 0 start with '/'
+let breadcrumbArray = ["/"]// level 0 start with '/'
 
 let configuration;
 
@@ -8,123 +8,119 @@ let selectedUploadFiles = [];
 let recentSentFiles = [];
 
 // remove test data and fetch from api latter
-let sharedFiles = {
-    msg: "Share directory file tree",
-    data: [
-        {
-            name: "Screenshot From 2026-10-08 13-11-32.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-08 13-11-32.png",
-            size: 76023,
-        },
+let sharedFiles = [
+    {
+        name: "Screenshot From 2026-10-08 13-11-32.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-08 13-11-32.png",
+        size: 76023,
+    },
 
-        {
-            name: "Screenshot From 2026-10-14 15-36-47.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-14 15-36-47.png",
-            size: 101366,
-        },
-        {
-            name: "Screenshot From 2026-10-15 13-44-31.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-15 13-44-31.png",
-            size: 50374,
-        },
-        {
-            name: "Screenshot From 2026-10-15 14-13-49.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-15 14-13-49.png",
-            size: 29241,
-        },
-        {
-            name: "Screenshot From 2026-10-15 15-25-54.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-15 15-25-54.png",
-            size: 21327,
-        },
-        {
-            name: "Screenshot From 2026-10-15 22-24-45.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-24-45.png",
-            size: 382464,
-        },
-        {
-            name: "Screenshot From 2026-10-15 22-49-39.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-49-39.png",
-            size: 276267,
-        },
-        {
-            name: "Screenshot From 2026-10-15 23-04-48.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-15 23-04-48.png",
-            size: 419692,
-        },
-        {
-            name: "Screenshot From 2026-10-16 10-40-13.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-40-13.png",
-            size: 738011,
-        },
-        {
-            name: "Screenshot From 2026-10-16 10-41-06.png",
-            path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-41-06.png",
-            size: 521173,
-        },
-        {
-            name: "Screenshot From 2026-10-07 11-36-54.png",
-            path: "Screenshot From 2026-10-07 11-36-54.png",
-            size: 35916,
-        },
-        {
-            name: "Screenshot From 2026-10-08 11-43-51.png",
-            path: "Screenshot From 2026-10-08 11-43-51.png",
-            size: 37754,
-        },
-        {
-            name: "System Analysis concept.1st week.pdf",
-            path: "university document/System Analysis concept.1st week.pdf",
-            size: 176037,
-        },
-        {
-            name: "case study 3rd week SDLC.pdf",
-            path: "university document/case study 3rd week SDLC.pdf",
-            size: 187407,
-        },
-        {
-            name: "ch3_1_v1.ppt (1).pdf",
-            path: "university document/ch3_1_v1.ppt (1).pdf",
-            size: 2332978,
-        },
-        {
-            name: "ch3_1_v1.ppt.pdf",
-            path: "university document/ch3_1_v1.ppt.pdf",
-            size: 2332978,
-        },
-        {
-            name: "ch3_2_v1.ppt.pdf",
-            path: "university document/ch3_2_v1.ppt.pdf",
-            size: 995171,
-        },
-        {
-            name: "ch3_3_v1.ppt.pdf",
-            path: "university document/ch3_3_v1.ppt.pdf",
-            size: 855704,
-        },
-        {
-            name: "ch3_4_v1.ppt.pdf",
-            path: "university document/ch3_4_v1.ppt.pdf",
-            size: 522412,
-        },
-        {
-            name: "ch3_5_v1.ppt.pdf",
-            path: "university document/ch3_5_v1.ppt.pdf",
-            size: 659263,
-        },
-        {
-            name: "system analysis 2nd week (1).pdf",
-            path: "university document/system analysis 2nd week (1).pdf",
-            size: 275087,
-        },
-        {
-            name: "system analysis 2nd week.pdf",
-            path: "university document/system analysis 2nd week.pdf",
-            size: 275087,
-        },
-    ],
-    status: 200,
-};
+    {
+        name: "Screenshot From 2026-10-14 15-36-47.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-14 15-36-47.png",
+        size: 101366,
+    },
+    {
+        name: "Screenshot From 2026-10-15 13-44-31.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 13-44-31.png",
+        size: 50374,
+    },
+    {
+        name: "Screenshot From 2026-10-15 14-13-49.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 14-13-49.png",
+        size: 29241,
+    },
+    {
+        name: "Screenshot From 2026-10-15 15-25-54.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 15-25-54.png",
+        size: 21327,
+    },
+    {
+        name: "Screenshot From 2026-10-15 22-24-45.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-24-45.png",
+        size: 382464,
+    },
+    {
+        name: "Screenshot From 2026-10-15 22-49-39.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-49-39.png",
+        size: 276267,
+    },
+    {
+        name: "Screenshot From 2026-10-15 23-04-48.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 23-04-48.png",
+        size: 419692,
+    },
+    {
+        name: "Screenshot From 2026-10-16 10-40-13.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-40-13.png",
+        size: 738011,
+    },
+    {
+        name: "Screenshot From 2026-10-16 10-41-06.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-41-06.png",
+        size: 521173,
+    },
+    {
+        name: "Screenshot From 2026-10-07 11-36-54.png",
+        path: "Screenshot From 2026-10-07 11-36-54.png",
+        size: 35916,
+    },
+    {
+        name: "Screenshot From 2026-10-08 11-43-51.png",
+        path: "Screenshot From 2026-10-08 11-43-51.png",
+        size: 37754,
+    },
+    {
+        name: "System Analysis concept.1st week.pdf",
+        path: "university document/System Analysis concept.1st week.pdf",
+        size: 176037,
+    },
+    {
+        name: "case study 3rd week SDLC.pdf",
+        path: "university document/case study 3rd week SDLC.pdf",
+        size: 187407,
+    },
+    {
+        name: "ch3_1_v1.ppt (1).pdf",
+        path: "university document/ch3_1_v1.ppt (1).pdf",
+        size: 2332978,
+    },
+    {
+        name: "ch3_1_v1.ppt.pdf",
+        path: "university document/ch3_1_v1.ppt.pdf",
+        size: 2332978,
+    },
+    {
+        name: "ch3_2_v1.ppt.pdf",
+        path: "university document/ch3_2_v1.ppt.pdf",
+        size: 995171,
+    },
+    {
+        name: "ch3_3_v1.ppt.pdf",
+        path: "university document/ch3_3_v1.ppt.pdf",
+        size: 855704,
+    },
+    {
+        name: "ch3_4_v1.ppt.pdf",
+        path: "university document/ch3_4_v1.ppt.pdf",
+        size: 522412,
+    },
+    {
+        name: "ch3_5_v1.ppt.pdf",
+        path: "university document/ch3_5_v1.ppt.pdf",
+        size: 659263,
+    },
+    {
+        name: "system analysis 2nd week (1).pdf",
+        path: "university document/system analysis 2nd week (1).pdf",
+        size: 275087,
+    },
+    {
+        name: "system analysis 2nd week.pdf",
+        path: "university document/system analysis 2nd week.pdf",
+        size: 275087,
+    },
+];
 
 let fileFormats = {
     "file-image": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
@@ -144,12 +140,30 @@ let icons = {
     folder: "folder-open",
 };
 
-// download tab elements
-const listSharedContainer = document.getElementById("sharedFilesList");
-const itemCountText = document.getElementById;
+// get a icon for specific name
+function getIconImg(iconName, extraClass = "") {
+    const iconSrc = icons[iconName] || icons["file"];
+    return `<img src="assets/icons/${iconSrc}.svg" class="icon-img ${extraClass}"></img>`;
+}
+
+// Get a icon name for a file.
+function getFileIconName(fileName) {
+    const ext = fileName.split(".").pop().toLowerCase();
+
+    for (const [key, value] of Object.entries(fileFormats)) {
+        if (value.includes(ext)) {
+            return key;
+        }
+    }
+
+    return "file";
+}
+
+// // download tab elements
+// const listSharedContainer = document.getElementById("sharedFilesList");
+// const itemCountText = document.getElementById;
 
 // tab sections elements
-let activeTab = "upload";
 const tabUploadBtn = document.getElementById("tabUpload");
 const tabDownloadBtn = document.getElementById("tabDownload");
 const uploadIcon = tabUploadBtn.firstElementChild;
@@ -158,9 +172,7 @@ const sectionUpload = document.getElementById("sectionUpload");
 const sectionDownload = document.getElementById("sectionDownload");
 
 // manage the tab switching
-function switchTab(tab) {
-    activeTab = tab;
-
+function switchTab(tab = "upload") {
     if (tab === "upload") {
         tabUploadBtn.classList.add("active");
         tabDownloadBtn.classList.remove("active");
@@ -254,6 +266,49 @@ function renderSelectedUploadList() {
 
         listSeletedContainer.appendChild(containerEl);
     });
+}
+
+// remove a file from selectedUploadfiles array.
+function removeSelectedFile(id) {
+    selectedUploadFiles = selectedUploadFiles.filter((f) => f.id !== id);
+    renderSelectedUploadList();
+}
+
+// remove all element from the array
+function clearAllSeleceted() {
+    selectedUploadFiles = [];
+    renderSelectedUploadList();
+}
+
+// escape html chars
+function escapeHtml(text) {
+    const htmlEntities = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+        "`": "&#96;",
+    };
+
+    return String(text).replace(/[&<>"']/g, (match) => htmlEntities[match]);
+}
+
+// calculate the total uploaded file size
+function countBytesSize(files) {
+    return files.reduce((sum, item) => (sum += item.rawFile.size), 0);
+}
+
+// format bytes into Bytes, KB, MB, GB, TB.
+function formatBytes(bytes, decimals = 1) {
+    if (!bytes) return "0 Bytes";
+
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    const sz = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const i = Math.floor(Math.log(bytes) / Math.log(sz));
+
+    return parseFloat(bytes / Math.pow(sz, i)).toFixed(dm) + " " + sizes[i];
 }
 
 // begin the upload process
@@ -396,74 +451,45 @@ function showToast(msg) {
     }, 3000);
 }
 
-// escape html chars
-function escapeHtml(text) {
-    const htmlEntities = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-        "`": "&#96;",
-    };
-
-    return String(text).replace(/[&<>"']/g, (match) => htmlEntities[match]);
-}
-
-// remove a file from selectedUploadfiles array.
-function removeSelectedFile(id) {
-    selectedUploadFiles = selectedUploadFiles.filter((f) => f.id !== id);
-    renderSelectedUploadList();
-}
-
-// remove all element from the array
-function clearAllSeleceted() {
-    selectedUploadFiles = [];
-    renderSelectedUploadList();
-}
-
-// calculate the total uploaded file size
-function countBytesSize(files) {
-    return files.reduce((sum, item) => (sum += item.rawFile.size), 0);
-}
-
-// format bytes into Bytes, KB, MB, GB, TB.
-function formatBytes(bytes, decimals = 1) {
-    if (!bytes) return "0 Bytes";
-
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-    const sz = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const i = Math.floor(Math.log(bytes) / Math.log(sz));
-
-    return parseFloat(bytes / Math.pow(sz, i)).toFixed(dm) + " " + sizes[i];
-}
-
-// get a icon for specific name
-function getIconImg(iconName, extraClass = "") {
-    const iconSrc = icons[iconName] || icons["file"];
-    return `<img src="assets/icons/${iconSrc}.svg" class="icon-img ${extraClass}"></img>`;
-}
-
-// Get a icon name for a file.
-function getFileIconName(fileName) {
-    const ext = fileName.split(".").pop().toLowerCase();
-
-    for (const [key, value] of Object.entries(fileFormats)) {
-        if (value.includes(ext)) {
-            return key;
-        }
-    }
-
-    return "file";
-}
-
 function navigateUpDirectory() {}
 
 function renderSharedFiles() {
+    renderBreadcrumbs();
     // get the files list from api and render them
     // render them here
 }
+
+// download tab breadcrumb section
+const breadcrumbContainer = document.getElementById("breadcrumbContainer");
+const breadcrumbUpBtn = document.getElementById("upDirctoryBtn");
+
+// render the breadcrumbs
+function renderBreadcrumbs() {
+    let html = ``;
+    let breadcrembLength = breadcrumbArray.length;
+
+    breadcrumbArray.forEach((folder, index) => {
+        html += `<span style="color: var(--text-light); font-size: 0.65rem;">&gt</span>`;
+
+        let isLast = index === breadcrembLength - 1;
+        if (isLast) {
+            html += `<span class="breadcrumb-node current">${escapeHtml(folder)}</span>`;
+        } else {
+            html += `<span class="breadcrumb-node" onclick="navigateUpDirectory(${index})">${escapeHtml(folder)}</span>`;
+        }
+    });
+
+    breadcrumbContainer.innerHTML = html;
+
+    if (breadcrumbArray.length > 1) {
+        breadcrumbUpBtn.classList.remove("hidden");
+    } else {
+        breadcrumbUpBtn.classList.add("hidden");
+    }
+}
+
+// up directory function
+function navigateUpDirectory(index) {}
 
 function filterSharedFiles() {}
 
@@ -500,9 +526,12 @@ function formatedSharedFilesPath() {
 
 // subtract all the folders name and remove file names and return an array
 function getDirList(path) {
-    let pathArr = path.toString().replace(/\\/g, "/").split("/").pop();
-    pathArr.pop();
-    return pathArr;
+    let pathArray = ["/"];
+    let folders = path.toString().replace(/\\/g, "/").split("/");
+    folders.forEach((f) => pathArray.push(f));
+    pathArray.pop();
+
+    return pathArray;
 }
 
 async function getConfigs() {

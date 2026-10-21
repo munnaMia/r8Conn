@@ -391,7 +391,7 @@ body {
 
 .btn-secondary-block {
     padding: 8px 12px;
-    background-color: var(--primary-light);
+    background-color: var(--bg-subtle);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     font-size: 0.85rem;
@@ -405,8 +405,7 @@ body {
 }
 
 .btn-secondary-block:hover {
-    background-color: var(--primary);
-    color: #fff5f5;
+    background-color: var(--primary-light);
 }
 
 .btn-icon-square {
@@ -653,11 +652,22 @@ body {
     align-items: center;
     gap: 6px;
     font-size: 0.75rem;
-    overflow-y: auto;
+    overflow-x: auto;
     white-space: nowrap;
     scrollbar-width: thin;
     flex: 1;
-    min-width: 0;
+    max-width: 350px;
+}
+.breadcrumb-node {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.current {
+    color: var(--text-main);
+    font-size: 0.8rem;
 }
 
 .search-row {
