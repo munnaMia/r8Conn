@@ -451,8 +451,17 @@ body {
 .file-info-group {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
     gap: 12px;
     overflow: hidden;
+}
+
+.file-share-sub-container{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: start;
 }
 
 .file-icon-box {

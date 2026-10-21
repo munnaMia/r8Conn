@@ -143,6 +143,7 @@ let sharedFiles = [
     },
 ];
 let hasSelectedDownloadIds = new Set();
+let subFolders = new Set();
 
 let fileFormats = {
     "file-image": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
@@ -160,6 +161,7 @@ let icons = {
     "file-pdf": "file-pdf",
     file: "document",
     folder: "folder-open",
+    download: "download",
 };
 
 // get a icon for specific name
@@ -495,29 +497,53 @@ function renderSharedFiles() {
 
     downloadBtn.classList.remove("hidden");
     const curDirInfo = getCurrentDirectoryInfo();
+
+    // filter out files based on folder name its complecated and developer own logic so sorry if u feel odd for this one
     let itemToShow = sharedFiles.filter((f) => f.dirList[curDirInfo.dir_level] === curDirInfo.name);
-    // curDirInfo.dir_level  < file.dirList.length-1
-    let subFolders = new Set();
+
+    // extract the subfolder names.
     itemToShow.forEach((f) => {
         if (curDirInfo.dir_level < f.dirList.length - 1) {
             subFolders.add(f.dirList[curDirInfo.dir_level + 1]);
         }
     });
-    console.log(subFolders)
+
+    // render folder first here firse-------------------
 
     itemToShow.forEach((file) => {
-        const isSeleted = hasSelectedDownloadIds.has(file.id);
+        const isSelected = hasSelectedDownloadIds.has(file.id);
         const card = document.createElement("div");
         card.className = "file-item-card";
 
-        if (isSeleted) {
+        if (isSelected) {
             card.style.borderColor = "var(--primary)";
             card.style.backgroundColor = "var(--primary-light)";
         }
 
-        // render folder first
+        card.onclick = (e) => {
+            if (e.target.tagName !== "INPUT") {
+                toggleSelectDownloadFile(file.id);
+            }
+        };
 
-        // render file secound
+        card.innerHTML = `
+        <div class="file-info-group">
+            <div class="file-share-sub-container">
+                <div class="file-icon-box">
+                    ${getIconImg(file.icon)}
+                </div>
+                <div class="file-details">
+                    <div class="file-name">${escapeHtml(file.name)}</div>
+                    <div class="file-meta">${file.formatedSize}</div>
+                </div>
+            </div>
+            <button onclick="event.stopPropagation(); downloadSingleFile('${file.path}')" class="btn-remove-file" title="Download File">
+                ${getIconImg("download", "sm")}
+            </button>
+        </div>
+        `;
+
+        listSharedContainer.appendChild(card);
     });
 }
 
@@ -567,9 +593,20 @@ function navigateToBreadCrumb(index) {}
 
 function filterSharedFiles() {}
 
+function toggleSelectDownloadFile(id) {
+    if (hasSelectedDownloadIds.has(id)) {
+        hasSelectedDownloadIds.delete(id);
+    } else {
+        hasSelectedDownloadIds.add(id);
+    }
+    renderSharedFiles();
+}
+
 function toggleSelectAllShared() {}
 
-function downloadSeletedFiles() {}
+function downloadSingleFile(path) {}
+
+function downloadSeletedFiles(paths) {}
 
 // call api to fetch all the files list from backend
 async function getSharedFiles() {
@@ -586,15 +623,17 @@ async function getSharedFiles() {
     //     console.error("failed to fetch configurations: ", error);
     // }
 
-    formatedSharedFilesPath();
+    formatedSharedFilesInfos();
 }
 
 // add a new field for path array for each file breadcremb
-function formatedSharedFilesPath() {
+function formatedSharedFilesInfos() {
     if (sharedFiles.length === 0) return;
 
     sharedFiles.forEach((file) => {
         file["dirList"] = getDirList(file.path);
+        file["icon"] = getIconImg(getFileIconName(file.name));
+        file["formatedSize"] = formatBytes(file.size);
     });
 }
 
