@@ -499,10 +499,13 @@ function renderSharedFiles() {
     const curDirInfo = getCurrentDirectoryInfo();
 
     // filter out files based on folder name its complecated and developer own logic so sorry if u feel odd for this one
-    let itemToShow = sharedFiles.filter((f) => f.dirList[curDirInfo.dir_level] === curDirInfo.name);
+    let itemToShow = sharedFiles.filter((f) => {
+        return f.dirList[curDirInfo.dir_level] === curDirInfo.name;
+    });
+    // && f.dirList.length
 
     // extract the subfolder names.
-    itemToShow.forEach((f) => {
+    sharedFiles.forEach((f) => {
         if (curDirInfo.dir_level < f.dirList.length - 1) {
             subFolders.add(f.dirList[curDirInfo.dir_level + 1]);
         }
@@ -514,7 +517,7 @@ function renderSharedFiles() {
 
         card.onclick = (e) => {
             // open the folder
-        }
+        };
 
         card.innerHTML = `
         <div class="file-info-group">
@@ -527,9 +530,9 @@ function renderSharedFiles() {
                 </div>
             </div>
         </div>
-        `
+        `;
 
-        listSharedContainer.appendChild(card)
+        listSharedContainer.appendChild(card);
     });
 
     itemToShow.forEach((file) => {
@@ -558,7 +561,7 @@ function renderSharedFiles() {
                     <div class="file-meta">${file.formatedSize}</div>
                 </div>
             </div>
-            <button onclick="event.stopPropagation(); downloadSingleFile('${file.path}')" class="btn-remove-file" title="Download File">
+            <button onclick="event.stopPropagation(); downloadSeletedFiles('${file.path}')" class="btn-remove-file" title="Download File">
                 ${getIconImg("download", "sm")}
             </button>
         </div>
@@ -621,12 +624,6 @@ function toggleSelectDownloadFile(id) {
         hasSelectedDownloadIds.add(id);
     }
     renderSharedFiles();
-}
-
-function toggleSelectAllShared() {}
-
-function downloadSingleFile(path) {
-    console.log(path)
 }
 
 function downloadSeletedFiles(paths) {}
