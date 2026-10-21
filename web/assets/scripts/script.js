@@ -508,7 +508,29 @@ function renderSharedFiles() {
         }
     });
 
-    // render folder first here firse-------------------
+    subFolders.forEach((folder) => {
+        const card = document.createElement("div");
+        card.className = "file-item-card";
+
+        card.onclick = (e) => {
+            // open the folder
+        }
+
+        card.innerHTML = `
+        <div class="file-info-group">
+            <div class= "file-share-sub-container">
+                <div class="file-icon-box" style="background-color: var(--amber-light); border-color: #fde68a;">
+                    ${getIconImg("folder")}
+                </div>
+                <div class="file-details">
+                    <div class="file-name" style="cursor: pointer;">${escapeHtml(folder)}</div>
+                </div>
+            </div>
+        </div>
+        `
+
+        listSharedContainer.appendChild(card)
+    });
 
     itemToShow.forEach((file) => {
         const isSelected = hasSelectedDownloadIds.has(file.id);
@@ -521,9 +543,8 @@ function renderSharedFiles() {
         }
 
         card.onclick = (e) => {
-            if (e.target.tagName !== "INPUT") {
-                toggleSelectDownloadFile(file.id);
-            }
+            if (e.target.closest("button")) return;
+            toggleSelectDownloadFile(file.id);
         };
 
         card.innerHTML = `
@@ -604,7 +625,9 @@ function toggleSelectDownloadFile(id) {
 
 function toggleSelectAllShared() {}
 
-function downloadSingleFile(path) {}
+function downloadSingleFile(path) {
+    console.log(path)
+}
 
 function downloadSeletedFiles(paths) {}
 
