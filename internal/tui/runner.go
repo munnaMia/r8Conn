@@ -137,6 +137,7 @@ func (m model) View() string {
 
 func (m model) InitTuiApp() tea.Msg {
 	var err error
+	var ok bool
 
 	if err = network.InitializeAddr(m.config); err != nil {
 		slog.Error("failed to initialized network ip and port", "error", err)
@@ -145,23 +146,32 @@ func (m model) InitTuiApp() tea.Msg {
 	}
 
 	if m.config.StorageDir != "" {
-		if ok := utils.IsDir(m.config.StorageDir); !ok {
+		m.config.StorageDir, ok = utils.IsDir(m.config.BaseDir, m.config.StorageDir)
+		if !ok {
 			return ErrMsg(errors.New("Given upload location not exists try another one"))
 		}
 	}
 
 	if m.config.ShareDir != "" {
-		if ok := utils.IsDir(m.config.ShareDir); !ok {
+		m.config.ShareDir, ok = utils.IsDir(m.config.BaseDir, m.config.ShareDir)
+		if !ok {
 			return ErrMsg(errors.New("Given download location not exists try another one"))
 		}
 	}
 
 	// get a default storage location to store uploaded file. if not provided
 	if m.config.StorageDir == "" {
-		m.config.StorageDir, err = utils.GetDownloadsPath()
+		m.config.StorageDir, err = utils.GetDownloadsPath(m.config.BaseDir)
 		if err != nil {
-			slog.Error("failed to get a download path", "error", err)
 			return ErrMsg(errors.New("Failed to get a default upload location. \n please select one using flag -upd"))
+		}
+	}
+
+	// get a default share location to share files. if not provided
+	if m.config.ShareDir == "" {
+		m.config.ShareDir, err = utils.GetDownloadsPath(m.config.BaseDir)
+		if err != nil {
+			return ErrMsg(errors.New("Failed to get a default share location. \n please select one using flag -dwd"))
 		}
 	}
 

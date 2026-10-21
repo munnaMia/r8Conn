@@ -1,9 +1,149 @@
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
+let breadcrumbArray = ["/"]; // level 0 start with '/'
 
 let configuration;
 
 let selectedUploadFiles = [];
 let recentSentFiles = [];
+
+// remove test data and fetch from api latter
+let sharedFiles = [
+    {
+        id: 0,
+        name: "Screenshot From 2026-10-08 13-11-32.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-08 13-11-32.png",
+        size: 76023,
+    },
+
+    {
+        id: 1,
+        name: "Screenshot From 2026-10-14 15-36-47.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-14 15-36-47.png",
+        size: 101366,
+    },
+    {
+        id: 2,
+        name: "Screenshot From 2026-10-15 13-44-31.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 13-44-31.png",
+        size: 50374,
+    },
+    {
+        id: 3,
+        name: "Screenshot From 2026-10-15 14-13-49.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 14-13-49.png",
+        size: 29241,
+    },
+    {
+        id: 4,
+        name: "Screenshot From 2026-10-15 15-25-54.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 15-25-54.png",
+        size: 21327,
+    },
+    {
+        id: 5,
+        name: "Screenshot From 2026-10-15 22-24-45.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-24-45.png",
+        size: 382464,
+    },
+    {
+        id: 6,
+        name: "Screenshot From 2026-10-15 22-49-39.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-49-39.png",
+        size: 276267,
+    },
+    {
+        id: 7,
+        name: "Screenshot From 2026-10-15 23-04-48.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-15 23-04-48.png",
+        size: 419692,
+    },
+    {
+        id: 8,
+        name: "Screenshot From 2026-10-16 10-40-13.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-40-13.png",
+        size: 738011,
+    },
+    {
+        id: 77,
+        name: "Screenshot From 2026-10-16 10-41-06.png",
+        path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-41-06.png",
+        size: 521173,
+    },
+    {
+        id: 55,
+        name: "Screenshot From 2026-10-07 11-36-54.png",
+        path: "Screenshot From 2026-10-07 11-36-54.png",
+        size: 35916,
+    },
+    {
+        id: 56,
+        name: "Screenshot From 2026-10-08 11-43-51.png",
+        path: "Screenshot From 2026-10-08 11-43-51.png",
+        size: 37754,
+    },
+    {
+        id: 58,
+        name: "System Analysis concept.1st week.pdf",
+        path: "university document/System Analysis concept.1st week.pdf",
+        size: 176037,
+    },
+    {
+        id: 59,
+        name: "case study 3rd week SDLC.pdf",
+        path: "university document/case study 3rd week SDLC.pdf",
+        size: 187407,
+    },
+    {
+        id: 12,
+        name: "ch3_1_v1.ppt (1).pdf",
+        path: "university document/ch3_1_v1.ppt (1).pdf",
+        size: 2332978,
+    },
+    {
+        id: 13,
+        name: "ch3_1_v1.ppt.pdf",
+        path: "university document/ch3_1_v1.ppt.pdf",
+        size: 2332978,
+    },
+    {
+        id: 14,
+        name: "ch3_2_v1.ppt.pdf",
+        path: "university document/ch3_2_v1.ppt.pdf",
+        size: 995171,
+    },
+    {
+        id: 15,
+        name: "ch3_3_v1.ppt.pdf",
+        path: "university document/ch3_3_v1.ppt.pdf",
+        size: 855704,
+    },
+    {
+        id: 25,
+        name: "ch3_4_v1.ppt.pdf",
+        path: "university document/ch3_4_v1.ppt.pdf",
+        size: 522412,
+    },
+    {
+        id: 26,
+        name: "ch3_5_v1.ppt.pdf",
+        path: "university document/ch3_5_v1.ppt.pdf",
+        size: 659263,
+    },
+    {
+        id: 36,
+        name: "system analysis 2nd week (1).pdf",
+        path: "university document/system analysis 2nd week (1).pdf",
+        size: 275087,
+    },
+    {
+        id: 446,
+        name: "system analysis 2nd week.pdf",
+        path: "university document/system analysis 2nd week.pdf",
+        size: 275087,
+    },
+];
+let hasSelectedDownloadIds = new Set();
+let subFolders = new Set();
 
 let fileFormats = {
     "file-image": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
@@ -21,10 +161,29 @@ let icons = {
     "file-pdf": "file-pdf",
     file: "document",
     folder: "folder-open",
+    download: "download",
 };
 
-// tab section
-let activeTab = "upload";
+// get a icon for specific name
+function getIconImg(iconName, extraClass = "") {
+    const iconSrc = icons[iconName] || icons["file"];
+    return `<img src="assets/icons/${iconSrc}.svg" class="icon-img ${extraClass}"></img>`;
+}
+
+// Get a icon name for a file.
+function getFileIconName(fileName) {
+    const ext = fileName.split(".").pop().toLowerCase();
+
+    for (const [key, value] of Object.entries(fileFormats)) {
+        if (value.includes(ext)) {
+            return key;
+        }
+    }
+
+    return "file";
+}
+
+// tab sections elements
 const tabUploadBtn = document.getElementById("tabUpload");
 const tabDownloadBtn = document.getElementById("tabDownload");
 const uploadIcon = tabUploadBtn.firstElementChild;
@@ -32,34 +191,8 @@ const downloadIcon = tabDownloadBtn.firstElementChild;
 const sectionUpload = document.getElementById("sectionUpload");
 const sectionDownload = document.getElementById("sectionDownload");
 
-// seleceted files section.
-const countText = document.getElementById("fileCountText");
-const uploadBtn = document.getElementById("uploadActionButton");
-const header = document.getElementById("selectedFilesHeader");
-const listContainer = document.getElementById("selectedFilesList");
-
-// recent upload section
-const recentContainer = document.getElementById("recentUploadsContainer");
-const recentUploadList = document.getElementById("recentUploadsList");
-const sentCount = document.getElementById("completedCount");
-
-// model elements
-const modal = document.getElementById("transferModal");
-const progressBar = document.getElementById("modalProgressBar");
-const modalPercent = document.getElementById("modalPercent");
-const modalTitle = document.getElementById("modalTitle");
-const modalSub = document.getElementById("modalSub");
-const modalSize = document.getElementById("modalTransferSize");
-const modalClose = document.getElementById("modalCloseBtn");
-
-// toast elements
-const toastContainer = document.getElementById("toast");
-const toastMsg = document.getElementById("toastTitle");
-
 // manage the tab switching
-function switchTab(tab) {
-    activeTab = tab;
-
+function switchTab(tab = "upload") {
     if (tab === "upload") {
         tabUploadBtn.classList.add("active");
         tabDownloadBtn.classList.remove("active");
@@ -87,6 +220,13 @@ function switchTab(tab) {
     }
 }
 
+// seleceted files section.
+const dropZone = document.getElementById("dropZone");
+const countText = document.getElementById("fileCountText");
+const uploadBtn = document.getElementById("uploadActionButton");
+const header = document.getElementById("selectedFilesHeader");
+const listSeletedContainer = document.getElementById("selectedFilesList");
+
 // handle the file selections
 function handleFileSelect(event) {
     const files = Array.from(event.target.files);
@@ -111,6 +251,86 @@ function handleFileSelect(event) {
     event.target.value = "";
 }
 
+// render the files that has been selected to send
+function renderSelectedUploadList() {
+    listSeletedContainer.innerHTML = "";
+
+    if (selectedUploadFiles.length === 0) {
+        header.classList.add("hidden");
+        uploadBtn.classList.add("hidden");
+        return;
+    }
+
+    header.classList.remove("hidden");
+    uploadBtn.classList.remove("hidden");
+    countText.innerText = selectedUploadFiles.length;
+
+    selectedUploadFiles.forEach((file) => {
+        const containerEl = document.createElement("div");
+        containerEl.className = "file-item-card";
+
+        containerEl.innerHTML = `
+                        <div class="file-info-group">
+                            <div class="file-icon-box">
+                                ${getIconImg(file.icon)}
+                            </div>
+                            <div class="file-details">
+                                <div class="file-name">${escapeHtml(file.name)}</div>
+                                <div class="file-meta">${file.formatedSize}</div>
+                            </div>
+                        </div>
+                        <button onclick="removeSelectedFile('${file.id}')" title="remove" class="btn-remove-file">
+                            <img class="icon-img sm danger-icon" src="assets/icons/cross.svg" alt="cross" />
+                        </button>
+        `;
+
+        listSeletedContainer.appendChild(containerEl);
+    });
+}
+
+// remove a file from selectedUploadfiles array.
+function removeSelectedFile(id) {
+    selectedUploadFiles = selectedUploadFiles.filter((f) => f.id !== id);
+    renderSelectedUploadList();
+}
+
+// remove all element from the array
+function clearAllSeleceted() {
+    selectedUploadFiles = [];
+    renderSelectedUploadList();
+}
+
+// escape html chars
+function escapeHtml(text) {
+    const htmlEntities = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+        "`": "&#96;",
+    };
+
+    return String(text).replace(/[&<>"']/g, (match) => htmlEntities[match]);
+}
+
+// calculate the total uploaded file size
+function countBytesSize(files) {
+    return files.reduce((sum, item) => (sum += item.rawFile.size), 0);
+}
+
+// format bytes into Bytes, KB, MB, GB, TB.
+function formatBytes(bytes, decimals = 1) {
+    if (!bytes) return "0 Bytes";
+
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    const sz = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const i = Math.floor(Math.log(bytes) / Math.log(sz));
+
+    return parseFloat(bytes / Math.pow(sz, i)).toFixed(dm) + " " + sizes[i];
+}
+
 // begin the upload process
 async function startUploadProcess(event) {
     event.preventDefault();
@@ -124,11 +344,6 @@ async function startUploadProcess(event) {
     modal.classList.remove("hidden");
 
     await uploadProcess();
-}
-
-// calculate the total uploaded file size
-function countBytesSize(files) {
-    return files.reduce((sum, item) => (sum += item.rawFile.size), 0);
 }
 
 // manage the upload process
@@ -187,42 +402,10 @@ async function uploadProcess() {
     renderRecentSentFiles();
 }
 
-// render the files that has been selected to send
-function renderSelectedUploadList() {
-    listContainer.innerHTML = "";
-
-    if (selectedUploadFiles.length === 0) {
-        header.classList.add("hidden");
-        uploadBtn.classList.add("hidden");
-        return;
-    }
-
-    header.classList.remove("hidden");
-    uploadBtn.classList.remove("hidden");
-    countText.innerText = selectedUploadFiles.length;
-
-    selectedUploadFiles.forEach((file) => {
-        const containerEl = document.createElement("div");
-        containerEl.className = "file-item-card";
-
-        containerEl.innerHTML = `
-                        <div class="file-info-group">
-                            <div class="file-icon-box">
-                                ${getIconImg(file.icon)}
-                            </div>
-                            <div class="file-details">
-                                <div class="file-name">${escapeHtml(file.name)}</div>
-                                <div class="file-meta">${file.formatedSize}</div>
-                            </div>
-                        </div>
-                        <button onclick="removeSelectedFile('${file.id}')" title="remove" class="btn-remove-file">
-                            <img class="icon-img sm danger-icon" src="assets/icons/cross.svg" alt="cross" />
-                        </button>
-        `;
-
-        listContainer.appendChild(containerEl);
-    });
-}
+// recent upload section
+const recentContainer = document.getElementById("recentUploadsContainer");
+const recentUploadList = document.getElementById("recentUploadsList");
+const sentCount = document.getElementById("completedCount");
 
 // render the files that has been sended
 function renderRecentSentFiles() {
@@ -252,6 +435,15 @@ function renderRecentSentFiles() {
     });
 }
 
+// model elements
+const modal = document.getElementById("transferModal");
+const progressBar = document.getElementById("modalProgressBar");
+const modalPercent = document.getElementById("modalPercent");
+const modalTitle = document.getElementById("modalTitle");
+const modalSub = document.getElementById("modalSub");
+const modalSize = document.getElementById("modalTransferSize");
+const modalClose = document.getElementById("modalCloseBtn");
+
 // render the modal
 function renderTransferModal(percent, uploadedSize, totalSize) {
     progressBar.style.width = `${percent}%`;
@@ -265,6 +457,11 @@ function closeModal() {
     modalClose.classList.add("hidden");
 }
 
+// toast elements
+const toastContainer = document.getElementById("toast");
+const toastMsg = document.getElementById("toastTitle");
+
+// render toast
 function showToast(msg) {
     toastMsg.innerText = msg;
     toastContainer.classList.add("show");
@@ -274,72 +471,181 @@ function showToast(msg) {
     }, 3000);
 }
 
-// get a icon for specific name
-function getIconImg(iconName, extraClass = "") {
-    const iconSrc = icons[iconName] || icons["file"];
-    return `<img src="assets/icons/${iconSrc}.svg" class="icon-img ${extraClass}"></img>`;
-}
+// // download tab elements
+const listSharedContainer = document.getElementById("sharedFilesList");
+const itemCountText = document.getElementById("sharedItemCount");
+const downloadBtn = document.getElementById("downloadNowBtn");
 
-// escape html chars
-function escapeHtml(text) {
-    const htmlEntities = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-        "`": "&#96;",
-    };
+function renderSharedFiles() {
+    renderBreadcrumbs();
 
-    return String(text).replace(/[&<>"']/g, (match) => htmlEntities[match]);
-}
+    listSharedContainer.innerHTML = "";
+    itemCountText.innerText = sharedFiles.length;
 
-// remove a file from selectedUploadfiles array.
-function removeSelectedFile(id) {
-    selectedUploadFiles = selectedUploadFiles.filter((f) => f.id !== id);
-    renderSelectedUploadList();
-}
+    if (sharedFiles.length === 0) {
+        downloadBtn.classList.add("hidden");
 
-// remove all element from the array
-function clearAllSeleceted() {
-    selectedUploadFiles = [];
-    renderSelectedUploadList();
-}
+        listSharedContainer.innerHTML = `
+            <div class="no-content" id="noContent">
+                <span class="no-content-msg">No folder has been seleted</span>
+                <p class="no-content-smsg">Go to App setting or use CLI flags</p>
+            </div>
+        `;
 
-// format bytes into Bytes, KB, MB, GB, TB.
-function formatBytes(bytes, decimals = 1) {
-    if (!bytes) return "0 Bytes";
-
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-    const sz = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const i = Math.floor(Math.log(bytes) / Math.log(sz));
-
-    return parseFloat(bytes / Math.pow(sz, i)).toFixed(dm) + " " + sizes[i];
-}
-
-// Get a icon name for a file.
-function getFileIconName(fileName) {
-    const ext = fileName.split(".").pop().toLowerCase();
-
-    for (const [key, value] of Object.entries(fileFormats)) {
-        if (value.includes(ext)) {
-            return key;
-        }
+        return;
     }
 
-    return "file";
+    downloadBtn.classList.remove("hidden");
+    const curDirInfo = getCurrentDirectoryInfo();
+
+    // filter out files based on folder name its complecated and developer own logic so sorry if u feel odd for this one
+    let itemToShow = sharedFiles.filter((f) => f.dirList[curDirInfo.dir_level] === curDirInfo.name);
+
+    // extract the subfolder names.
+    itemToShow.forEach((f) => {
+        if (curDirInfo.dir_level < f.dirList.length - 1) {
+            subFolders.add(f.dirList[curDirInfo.dir_level + 1]);
+        }
+    });
+
+    // render folder first here firse-------------------
+
+    itemToShow.forEach((file) => {
+        const isSelected = hasSelectedDownloadIds.has(file.id);
+        const card = document.createElement("div");
+        card.className = "file-item-card";
+
+        if (isSelected) {
+            card.style.borderColor = "var(--primary)";
+            card.style.backgroundColor = "var(--primary-light)";
+        }
+
+        card.onclick = (e) => {
+            if (e.target.tagName !== "INPUT") {
+                toggleSelectDownloadFile(file.id);
+            }
+        };
+
+        card.innerHTML = `
+        <div class="file-info-group">
+            <div class="file-share-sub-container">
+                <div class="file-icon-box">
+                    ${getIconImg(file.icon)}
+                </div>
+                <div class="file-details">
+                    <div class="file-name">${escapeHtml(file.name)}</div>
+                    <div class="file-meta">${file.formatedSize}</div>
+                </div>
+            </div>
+            <button onclick="event.stopPropagation(); downloadSingleFile('${file.path}')" class="btn-remove-file" title="Download File">
+                ${getIconImg("download", "sm")}
+            </button>
+        </div>
+        `;
+
+        listSharedContainer.appendChild(card);
+    });
 }
 
+// return info about current dir name and its level
+function getCurrentDirectoryInfo() {
+    const Dir_Level = breadcrumbArray.length - 1;
+    return {
+        name: breadcrumbArray[Dir_Level],
+        dir_level: Dir_Level,
+    };
+}
+
+// download tab breadcrumb section
+const breadcrumbContainer = document.getElementById("breadcrumbContainer");
+const breadcrumbUpBtn = document.getElementById("upDirctoryBtn");
+
+// render the breadcrumbs
+function renderBreadcrumbs() {
+    let html = ``;
+    let breadcrembLength = breadcrumbArray.length;
+
+    breadcrumbArray.forEach((folder, index) => {
+        html += `<span style="color: var(--text-light); font-size: 0.65rem;">&gt</span>`;
+
+        let isLast = index === breadcrembLength - 1;
+        if (isLast) {
+            html += `<span class="breadcrumb-node current">${escapeHtml(folder)}</span>`;
+        } else {
+            html += `<span class="breadcrumb-node" onclick="navigateToBreadCrumb(${index})">${escapeHtml(folder)}</span>`;
+        }
+    });
+
+    breadcrumbContainer.innerHTML = html;
+
+    if (breadcrumbArray.length > 1) {
+        breadcrumbUpBtn.classList.remove("hidden");
+    } else {
+        breadcrumbUpBtn.classList.add("hidden");
+    }
+}
+
+// pop one folder from breadcrumb and render shared files
 function navigateUpDirectory() {}
 
-function renderSharedFiles() {}
+// navigate through the breadcrumb directory path
+function navigateToBreadCrumb(index) {}
 
-function filterSharedFiles(){}
+function filterSharedFiles() {}
 
-function toggleSelectAllShared(){}
+function toggleSelectDownloadFile(id) {
+    if (hasSelectedDownloadIds.has(id)) {
+        hasSelectedDownloadIds.delete(id);
+    } else {
+        hasSelectedDownloadIds.add(id);
+    }
+    renderSharedFiles();
+}
 
-function downloadSeletedFiles(){}
+function toggleSelectAllShared() {}
+
+function downloadSingleFile(path) {}
+
+function downloadSeletedFiles(paths) {}
+
+// call api to fetch all the files list from backend
+async function getSharedFiles() {
+    // uncommented latter
+    // try {
+    //     const response = await fetch("/filesInfo");
+    //     if (!response.ok) {
+    //         throw new Error(`http error :${response.status}`);
+    //     }
+
+    //     res = await response.json();
+    //     sharedFiles = res.data;
+    // } catch (error) {
+    //     console.error("failed to fetch configurations: ", error);
+    // }
+
+    formatedSharedFilesInfos();
+}
+
+// add a new field for path array for each file breadcremb
+function formatedSharedFilesInfos() {
+    if (sharedFiles.length === 0) return;
+
+    sharedFiles.forEach((file) => {
+        file["dirList"] = getDirList(file.path);
+        file["icon"] = getIconImg(getFileIconName(file.name));
+        file["formatedSize"] = formatBytes(file.size);
+    });
+}
+
+// subtract all the folders name and remove file names and return an array
+function getDirList(path) {
+    let pathArray = ["/"];
+    let folders = path.toString().replace(/\\/g, "/").split("/");
+    folders.forEach((f) => pathArray.push(f));
+    pathArray.pop();
+
+    return pathArray;
+}
 
 async function getConfigs() {
     try {
@@ -350,14 +656,42 @@ async function getConfigs() {
         }
 
         res = await response.json();
-        configuration= res.data
+        configuration = res.data;
     } catch (error) {
         console.error("failed to fetch configurations: ", error);
     }
 }
 
+// handle drag and drop feature for file upload
+["dragenter", "dragover"].forEach((eventName) => {
+    dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+    });
+});
+
+["dragleave", "drop"].forEach((eventName) => {
+    dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+    });
+});
+
+dropZone.addEventListener("drop", (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        handleFileSelect({
+            target: {
+                files: files,
+            },
+        });
+    }
+});
+
 window.onload = function () {
     getConfigs();
+    getSharedFiles();
     renderSelectedUploadList();
     renderRecentSentFiles();
+    renderSharedFiles();
 };

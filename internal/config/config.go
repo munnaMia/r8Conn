@@ -7,6 +7,7 @@ import (
 type Config struct {
 	Port        int                `json:"port"`
 	PreferredIP string             `json:"ip"`
+	BaseDir     string             `json:"-"`
 	ShareDir    string             `json:"shareDir"`
 	StorageDir  string             `json:"storageDir"`
 	CLI         bool               `json:"-"`

@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/munnaMia/r8Conn/utils"
 )
 
 func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
@@ -59,29 +61,59 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("chunk received"))
 }
 
-// func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
-// 	files := make([]File, 0)
+func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
+	
+}
 
-// 	if h.config.ShareDir == "" {
-// 		http.Error(w, "folder not selected to share", http.StatusNotFound)
-// 		return
-// 	}
+func (h *Handler) getFilesInfo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-// 	filepath.ex
-// }
+	en := json.NewEncoder(w)
+
+	if h.config.ShareDir == "" {
+		err := en.Encode(ErrorResponse{
+			Msg:    "Select a directory to share",
+			Status: http.StatusNoContent,
+		})
+		if err != nil {
+			http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	fileTree, err := utils.GetFileTree(h.config.ShareDir)
+	if err != nil {
+		slog.Error("failed to parse file tree", "error", err)
+		err := en.Encode(ErrorResponse{
+			Msg:    "failed to read share directory",
+			Status: http.StatusInternalServerError,
+		})
+		if err != nil {
+			http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	err = en.Encode(SuccessResponse{
+		Msg:    "Share directory file tree",
+		Data:   fileTree,
+		Status: http.StatusOK,
+	})
+	if err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+	}
+}
 
 func (h *Handler) getConfigs(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	en := json.NewEncoder(w)
 
-	res := SuccessResponse{
+	err := en.Encode(SuccessResponse{
 		Msg:    "Application configuration",
 		Data:   h.config,
 		Status: http.StatusOK,
-	}
-
-	err := en.Encode(res)
+	})
 	if err != nil {
 		http.Error(w, "failed to encode json", http.StatusInternalServerError)
 		return

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log/slog"
+	"os"
 
 	"github.com/munnaMia/r8Conn/internal/cli"
 	"github.com/munnaMia/r8Conn/internal/config"
@@ -25,6 +26,13 @@ func Run() {
 	}
 	defer cleanUp()
 	slog.SetDefault(lg)
+
+	// fetch user home dir
+	cfg.BaseDir, err = os.UserHomeDir()
+	if err != nil {
+		slog.Error("failed to get user home dir", "error", err)
+		return
+	}
 
 	// initialized a new application handler
 	h := handler.NewHandler(cfg)
