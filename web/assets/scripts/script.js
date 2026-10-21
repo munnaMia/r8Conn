@@ -1,33 +1,14 @@
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
+const Dir_Level = 0; // 0 mean root level
+let breadcrumb = ["/"]; // level 0 start with '/'
 
 let configuration;
 
 let selectedUploadFiles = [];
 let recentSentFiles = [];
 
-let sharedFiles;
-let currentDirIndex = 0; // for breadcrumb
-
-let fileFormats = {
-    "file-image": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
-    "file-video": ["mp4", "mkv", "mov", "avi"],
-    "file-zip": ["zip", "rar", "7z", "tar"],
-    "file-code": ["html", "css", "js", "py", "fig"],
-    "file-pdf": ["pdf"],
-};
-
-let icons = {
-    "file-image": "picture",
-    "file-video": "video",
-    "file-zip": "zip-file",
-    "file-code": "code",
-    "file-pdf": "file-pdf",
-    file: "document",
-    folder: "folder-open",
-};
-
-// temp test data
-let sharedFilesDataTemp = {
+// remove test data and fetch from api latter
+let sharedFiles = {
     msg: "Share directory file tree",
     data: [
         {
@@ -145,6 +126,28 @@ let sharedFilesDataTemp = {
     status: 200,
 };
 
+let fileFormats = {
+    "file-image": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
+    "file-video": ["mp4", "mkv", "mov", "avi"],
+    "file-zip": ["zip", "rar", "7z", "tar"],
+    "file-code": ["html", "css", "js", "py", "fig"],
+    "file-pdf": ["pdf"],
+};
+
+let icons = {
+    "file-image": "picture",
+    "file-video": "video",
+    "file-zip": "zip-file",
+    "file-code": "code",
+    "file-pdf": "file-pdf",
+    file: "document",
+    folder: "folder-open",
+};
+
+// download tab elements
+const listSharedContainer = document.getElementById("sharedFilesList");
+const itemCountText = document.getElementById;
+
 // tab sections elements
 let activeTab = "upload";
 const tabUploadBtn = document.getElementById("tabUpload");
@@ -153,37 +156,6 @@ const uploadIcon = tabUploadBtn.firstElementChild;
 const downloadIcon = tabDownloadBtn.firstElementChild;
 const sectionUpload = document.getElementById("sectionUpload");
 const sectionDownload = document.getElementById("sectionDownload");
-
-// drop zone section
-const dropZone = document.getElementById("dropZone");
-
-// seleceted files section.
-const countText = document.getElementById("fileCountText");
-const uploadBtn = document.getElementById("uploadActionButton");
-const header = document.getElementById("selectedFilesHeader");
-const listSeletedContainer = document.getElementById("selectedFilesList");
-
-// recent upload section
-const recentContainer = document.getElementById("recentUploadsContainer");
-const recentUploadList = document.getElementById("recentUploadsList");
-const sentCount = document.getElementById("completedCount");
-
-// model elements
-const modal = document.getElementById("transferModal");
-const progressBar = document.getElementById("modalProgressBar");
-const modalPercent = document.getElementById("modalPercent");
-const modalTitle = document.getElementById("modalTitle");
-const modalSub = document.getElementById("modalSub");
-const modalSize = document.getElementById("modalTransferSize");
-const modalClose = document.getElementById("modalCloseBtn");
-
-// toast elements
-const toastContainer = document.getElementById("toast");
-const toastMsg = document.getElementById("toastTitle");
-
-// download tab elements
-const listSharedContainer = document.getElementById("sharedFilesList");
-const itemCountText = document.getElementById;
 
 // manage the tab switching
 function switchTab(tab) {
@@ -216,6 +188,13 @@ function switchTab(tab) {
     }
 }
 
+// seleceted files section.
+const dropZone = document.getElementById("dropZone");
+const countText = document.getElementById("fileCountText");
+const uploadBtn = document.getElementById("uploadActionButton");
+const header = document.getElementById("selectedFilesHeader");
+const listSeletedContainer = document.getElementById("selectedFilesList");
+
 // handle the file selections
 function handleFileSelect(event) {
     const files = Array.from(event.target.files);
@@ -238,6 +217,43 @@ function handleFileSelect(event) {
 
     renderSelectedUploadList();
     event.target.value = "";
+}
+
+// render the files that has been selected to send
+function renderSelectedUploadList() {
+    listSeletedContainer.innerHTML = "";
+
+    if (selectedUploadFiles.length === 0) {
+        header.classList.add("hidden");
+        uploadBtn.classList.add("hidden");
+        return;
+    }
+
+    header.classList.remove("hidden");
+    uploadBtn.classList.remove("hidden");
+    countText.innerText = selectedUploadFiles.length;
+
+    selectedUploadFiles.forEach((file) => {
+        const containerEl = document.createElement("div");
+        containerEl.className = "file-item-card";
+
+        containerEl.innerHTML = `
+                        <div class="file-info-group">
+                            <div class="file-icon-box">
+                                ${getIconImg(file.icon)}
+                            </div>
+                            <div class="file-details">
+                                <div class="file-name">${escapeHtml(file.name)}</div>
+                                <div class="file-meta">${file.formatedSize}</div>
+                            </div>
+                        </div>
+                        <button onclick="removeSelectedFile('${file.id}')" title="remove" class="btn-remove-file">
+                            <img class="icon-img sm danger-icon" src="assets/icons/cross.svg" alt="cross" />
+                        </button>
+        `;
+
+        listSeletedContainer.appendChild(containerEl);
+    });
 }
 
 // begin the upload process
@@ -311,42 +327,10 @@ async function uploadProcess() {
     renderRecentSentFiles();
 }
 
-// render the files that has been selected to send
-function renderSelectedUploadList() {
-    listSeletedContainer.innerHTML = "";
-
-    if (selectedUploadFiles.length === 0) {
-        header.classList.add("hidden");
-        uploadBtn.classList.add("hidden");
-        return;
-    }
-
-    header.classList.remove("hidden");
-    uploadBtn.classList.remove("hidden");
-    countText.innerText = selectedUploadFiles.length;
-
-    selectedUploadFiles.forEach((file) => {
-        const containerEl = document.createElement("div");
-        containerEl.className = "file-item-card";
-
-        containerEl.innerHTML = `
-                        <div class="file-info-group">
-                            <div class="file-icon-box">
-                                ${getIconImg(file.icon)}
-                            </div>
-                            <div class="file-details">
-                                <div class="file-name">${escapeHtml(file.name)}</div>
-                                <div class="file-meta">${file.formatedSize}</div>
-                            </div>
-                        </div>
-                        <button onclick="removeSelectedFile('${file.id}')" title="remove" class="btn-remove-file">
-                            <img class="icon-img sm danger-icon" src="assets/icons/cross.svg" alt="cross" />
-                        </button>
-        `;
-
-        listSeletedContainer.appendChild(containerEl);
-    });
-}
+// recent upload section
+const recentContainer = document.getElementById("recentUploadsContainer");
+const recentUploadList = document.getElementById("recentUploadsList");
+const sentCount = document.getElementById("completedCount");
 
 // render the files that has been sended
 function renderRecentSentFiles() {
@@ -376,6 +360,15 @@ function renderRecentSentFiles() {
     });
 }
 
+// model elements
+const modal = document.getElementById("transferModal");
+const progressBar = document.getElementById("modalProgressBar");
+const modalPercent = document.getElementById("modalPercent");
+const modalTitle = document.getElementById("modalTitle");
+const modalSub = document.getElementById("modalSub");
+const modalSize = document.getElementById("modalTransferSize");
+const modalClose = document.getElementById("modalCloseBtn");
+
 // render the modal
 function renderTransferModal(percent, uploadedSize, totalSize) {
     progressBar.style.width = `${percent}%`;
@@ -389,6 +382,11 @@ function closeModal() {
     modalClose.classList.add("hidden");
 }
 
+// toast elements
+const toastContainer = document.getElementById("toast");
+const toastMsg = document.getElementById("toastTitle");
+
+// render toast
 function showToast(msg) {
     toastMsg.innerText = msg;
     toastContainer.classList.add("show");
@@ -475,23 +473,26 @@ function downloadSeletedFiles() {}
 
 // call api to fetch all the files list from backend
 async function getSharedFiles() {
-    try {
-        const response = await fetch("/filesInfo");
-        if (!response.ok) {
-            throw new Error(`http error :${response.status}`);
-        }
+    // uncommented latter
+    // try {
+    //     const response = await fetch("/filesInfo");
+    //     if (!response.ok) {
+    //         throw new Error(`http error :${response.status}`);
+    //     }
 
-        res = await response.json();
-        sharedFiles = res.data;
-    } catch (error) {
-        console.error("failed to fetch configurations: ", error);
-    }
+    //     res = await response.json();
+    //     sharedFiles = res.data;
+    // } catch (error) {
+    //     console.error("failed to fetch configurations: ", error);
+    // }
 
     formatedSharedFilesPath();
 }
 
 // add a new field for path array for each file breadcremb
 function formatedSharedFilesPath() {
+    if (sharedFiles.length === 0) return;
+
     sharedFiles.forEach((file) => {
         file["dirList"] = getDirList(file.path);
     });

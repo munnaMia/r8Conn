@@ -61,7 +61,9 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("chunk received"))
 }
 
-func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
+	
+}
 
 func (h *Handler) getFilesInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
