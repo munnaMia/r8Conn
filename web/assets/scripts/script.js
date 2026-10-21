@@ -1,6 +1,5 @@
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
-const Dir_Level = 0; // 0 mean root level
-let breadcrumbArray = ["/"]// level 0 start with '/'
+let breadcrumbArray = ["/"]; // level 0 start with '/'
 
 let configuration;
 
@@ -158,10 +157,6 @@ function getFileIconName(fileName) {
 
     return "file";
 }
-
-// // download tab elements
-// const listSharedContainer = document.getElementById("sharedFilesList");
-// const itemCountText = document.getElementById;
 
 // tab sections elements
 const tabUploadBtn = document.getElementById("tabUpload");
@@ -451,12 +446,26 @@ function showToast(msg) {
     }, 3000);
 }
 
-function navigateUpDirectory() {}
+// // download tab elements
+const listSharedContainer = document.getElementById("sharedFilesList");
+const itemCountText = document.getElementById("sharedItemCount");
 
 function renderSharedFiles() {
     renderBreadcrumbs();
+
+    if (sharedFiles.length === 0) {
+    }
     // get the files list from api and render them
     // render them here
+}
+
+// return info about current dir name and its level
+function getCurrentDirectoryInfo() {
+    const Dir_Level = breadcrumbArray.length - 1;
+    return {
+        name: breadcrumbArray[Dir_Level],
+        dir_level: Dir_Level,
+    };
 }
 
 // download tab breadcrumb section
@@ -487,6 +496,8 @@ function renderBreadcrumbs() {
         breadcrumbUpBtn.classList.add("hidden");
     }
 }
+
+function navigateUpDirectory() {}
 
 // up directory function
 function navigateUpDirectory(index) {}
