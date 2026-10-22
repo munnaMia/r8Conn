@@ -500,9 +500,10 @@ function renderSharedFiles() {
 
     // filter out files based on folder name its complecated and developer own logic so sorry if u feel odd for this one
     let itemToShow = sharedFiles.filter((f) => {
-        return f.dirList[curDirInfo.dir_level] === curDirInfo.name;
+        return f.dirList[curDirInfo.dir_level] === curDirInfo.name && f.dirList.length - 1 === curDirInfo.dir_level;
     });
-    // && f.dirList.length
+
+    subFolders.clear(); // clear the sub folder set before rendering
 
     // extract the subfolder names.
     sharedFiles.forEach((f) => {
@@ -517,6 +518,7 @@ function renderSharedFiles() {
 
         card.onclick = (e) => {
             // open the folder
+            openFolder(folder);
         };
 
         card.innerHTML = `
@@ -596,7 +598,7 @@ function renderBreadcrumbs() {
         if (isLast) {
             html += `<span class="breadcrumb-node current">${escapeHtml(folder)}</span>`;
         } else {
-            html += `<span class="breadcrumb-node" onclick="navigateToBreadCrumb(${index})">${escapeHtml(folder)}</span>`;
+            html += `<span class="breadcrumb-node">${escapeHtml(folder)}</span>`;
         }
     });
 
@@ -609,13 +611,17 @@ function renderBreadcrumbs() {
     }
 }
 
+// open a folder
+function openFolder(name) {
+    breadcrumbArray.push(name);
+    renderSharedFiles();
+}
+
 // pop one folder from breadcrumb and render shared files
-function navigateUpDirectory() {}
-
-// navigate through the breadcrumb directory path
-function navigateToBreadCrumb(index) {}
-
-function filterSharedFiles() {}
+function navigateUpDirectory() {
+    breadcrumbArray.pop();
+    renderSharedFiles();
+}
 
 function toggleSelectDownloadFile(id) {
     if (hasSelectedDownloadIds.has(id)) {
