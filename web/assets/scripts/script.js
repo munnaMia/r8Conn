@@ -563,7 +563,7 @@ function renderSharedFiles() {
                     <div class="file-meta">${file.formatedSize}</div>
                 </div>
             </div>
-            <button onclick="event.stopPropagation(); downloadSeletedFiles('${file.path}')" class="btn-remove-file" title="Download File">
+            <button onclick="event.stopPropagation(); downloadFile('${file.path}')" class="btn-remove-file" title="Download File">
                 ${getIconImg("download", "sm")}
             </button>
         </div>
@@ -632,7 +632,32 @@ function toggleSelectDownloadFile(id) {
     renderSharedFiles();
 }
 
-function downloadSeletedFiles(paths) {}
+function downloadSeletedFiles() {
+    let pathArrayToDownload = [];
+
+    sharedFiles.forEach((file) => {
+        if (hasSelectedDownloadIds.has(file.id)) {
+            pathArrayToDownload.push(file.path);
+        }
+    });
+
+    downloadProcess(pathArrayToDownload)
+}
+
+function downloadFile(path) {
+    const pathArrayToDownload = Array.isArray(path) ? path : [path];
+
+    downloadProcess(pathArrayToDownload);
+}
+
+function downloadProcess(paths) {
+    const ToDownloadPaths = Array.isArray(paths) ? paths : [paths];
+
+    if (ToDownloadPaths.length === 0) {
+        alert("select files to download");
+        return;
+    }
+}
 
 // call api to fetch all the files list from backend
 async function getSharedFiles() {
