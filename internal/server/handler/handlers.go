@@ -10,8 +10,15 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/munnaMia/r8Conn/utils"
+)
+
+var (
+	sessionStore = make(map[string][]string)
+	sessionLock  sync.RWMutex
 )
 
 func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
@@ -62,59 +69,78 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
-	
+
+}
+
+func (h *Handler) getDownloadToken(w http.ResponseWriter, r *http.Request) {
+	var req DownloadRequest
+	var tkRes TokenResponse
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || len(req.Paths) == 0 {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	tkRes.Token = utils.GenerateToken()
+
+	sessionLock.Lock()
+	sessionStore[tkRes.Token] = req.Paths
+	sessionLock.Unlock()
+
+	// delete auto matically session after 5 minute
+	go func() {
+		time.Sleep(time.Minute * 5)
+		sessionLock.Lock()
+		delete(sessionStore, tkRes.Token)
+		sessionLock.Unlock()
+	}()
+
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(&tkRes)
+	if err != nil {
+		slog.Error("failed to encode the token response", "error", err)
+		http.Error(w, "failed to encode token json", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Handler) getFilesInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	en := json.NewEncoder(w)
-
 	if h.config.ShareDir == "" {
-		err := en.Encode(ErrorResponse{
-			Msg:    "Select a directory to share",
-			Status: http.StatusNoContent,
-		})
-		if err != nil {
-			http.Error(w, "failed to encode json", http.StatusInternalServerError)
-		}
+		http.Error(w, "Select a directory to share", http.StatusNoContent)
 		return
 	}
 
 	fileTree, err := utils.GetFileTree(h.config.ShareDir)
 	if err != nil {
 		slog.Error("failed to parse file tree", "error", err)
-		err := en.Encode(ErrorResponse{
-			Msg:    "failed to read share directory",
-			Status: http.StatusInternalServerError,
-		})
-		if err != nil {
-			http.Error(w, "failed to encode json", http.StatusInternalServerError)
-		}
+		http.Error(w, "failed to read share directory", http.StatusInternalServerError)
 		return
 	}
 
-	err = en.Encode(SuccessResponse{
+	err = json.NewEncoder(w).Encode(SuccessResponse{
 		Msg:    "Share directory file tree",
 		Data:   fileTree,
 		Status: http.StatusOK,
 	})
 	if err != nil {
+		slog.Error("failed to stream the file tree", "error", err)
 		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		return
 	}
 }
 
 func (h *Handler) getConfigs(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	en := json.NewEncoder(w)
-
-	err := en.Encode(SuccessResponse{
+	err := json.NewEncoder(w).Encode(SuccessResponse{
 		Msg:    "Application configuration",
 		Data:   h.config,
 		Status: http.StatusOK,
 	})
 	if err != nil {
+		slog.Error("failed to stream the configs", "error", err)
 		http.Error(w, "failed to encode json", http.StatusInternalServerError)
 		return
 	}
