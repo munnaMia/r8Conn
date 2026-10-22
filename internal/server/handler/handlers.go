@@ -69,6 +69,39 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
+	token := r.URL.Query().Get("token")
+	if token == "" {
+		http.Error(w, "provide a token", http.StatusBadRequest)
+		return
+	}
+
+	sessionLock.Lock()
+	paths, exist := sessionStore[token]
+	delete(sessionStore, token)
+	sessionLock.Unlock()
+
+	if !exist {
+		http.Error(w, "invalid or expire token", http.StatusBadRequest)
+		return
+	}
+
+	// single file transfer
+	if len(paths) == 1 {
+		path := strings.TrimSpace(paths[0])
+		filePath := filepath.Join(h.config.BaseDir, path)
+
+		info , err :=os.Stat(filePath)
+		if err !=nil {
+			http.Error(w, "file not found", http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename = %s", info.Name()))
+		http.ServeFile(w, r, filePath)
+		return
+	}
+
+	// multiple file transfer
 
 }
 
