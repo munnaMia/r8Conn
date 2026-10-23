@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 )
 
 type File struct {
@@ -77,4 +79,21 @@ func IsDir(baseDir, path string) (string, bool) {
 	}
 
 	return newPath, info.IsDir()
+}
+
+func GetUniqueFileName(name string, nameMap map[string]bool) string {
+	if !nameMap[name] {
+		return name
+	}
+
+	ext := filepath.Ext(name)
+	base := strings.TrimSuffix(name, ext)
+
+	for i := 2; ; i++ {
+		canbe := base + "(" + strconv.Itoa(i) + ")" + ext
+
+		if !nameMap[canbe] {
+			return canbe
+		}
+	}
 }

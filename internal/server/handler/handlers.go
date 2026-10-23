@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"archive/zip"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -88,20 +89,65 @@ func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
 	// single file transfer
 	if len(paths) == 1 {
 		path := strings.TrimSpace(paths[0])
-		filePath := filepath.Join(h.config.BaseDir, path)
+		filePath := filepath.Join(h.config.ShareDir, path)
 
-		info , err :=os.Stat(filePath)
-		if err !=nil {
+		info, err := os.Stat(filePath)
+		if err != nil {
 			http.Error(w, "file not found", http.StatusNotFound)
 			return
 		}
 
-		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename = %s", info.Name()))
+		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, info.Name()))
 		http.ServeFile(w, r, filePath)
 		return
 	}
 
 	// multiple file transfer
+	w.Header().Set("Content-Type", "application/zip")
+	w.Header().Set("Content-Disposition", `attachment; filename="r8Conn-download.zip"`)
+
+	nameMap := make(map[string]bool)
+	zipWriter := zip.NewWriter(w)
+	defer zipWriter.Close()
+
+	for _, path := range paths {
+
+		if path == "" {
+			continue
+		}
+
+		filePath := filepath.Join(h.config.ShareDir, path)
+
+		file, err := os.Open(filePath)
+		if err != nil {
+			continue
+		}
+		defer file.Close()
+
+		info, err := os.Stat(filePath)
+		if err != nil {
+			continue
+		}
+
+		header, err := zip.FileInfoHeader(info)
+		if err != nil {
+			continue
+		}
+		header.Name = utils.GetUniqueFileName(filepath.Base(filePath), nameMap)
+		header.Method = zip.Deflate
+
+		entryWriter, err := zipWriter.CreateHeader(header)
+		if err != nil {
+			continue
+		}
+
+		// stream the file on zip
+		_, err = io.Copy(entryWriter, file)
+		if err != nil {
+			continue
+		}
+
+	}
 
 }
 
