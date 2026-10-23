@@ -89,6 +89,7 @@ func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "provide a token", http.StatusBadRequest)
 		return
 	}
+	slog.Info("Req test", "URL", r.URL.Path, "method", r.Method)
 
 	sessionLock.Lock()
 	paths, exist := sessionStore[token]

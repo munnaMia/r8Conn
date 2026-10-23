@@ -106,6 +106,10 @@ func ResolvePath(dirPath, rawPath string) (string, os.FileInfo, error) {
 		return "", nil, errors.New("invalid file path")
 	}
 
+	if dirPath == "" || rawPath == "" {
+		return "", nil, errors.New("directory and file path required")
+	}
+
 	root, err := filepath.Abs(dirPath)
 	if err != nil {
 		return "", nil, err

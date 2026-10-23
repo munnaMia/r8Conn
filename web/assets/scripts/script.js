@@ -538,10 +538,11 @@ async function downloadProcess(paths) {
         const data = await response.json();
         const token = data.token;
 
-        const downloadURL = `/files?token=${token}`;
+        const downloadURL = `/files?token=${encodeURIComponent(token)}`;
 
         const a = document.createElement("a");
         a.href = downloadURL;
+
         if (ToDownloadPaths.length === 1) {
             a.download = ToDownloadPaths[0].toString().replace(/\\/g, "/").split("/").pop();
         } else {
@@ -549,7 +550,7 @@ async function downloadProcess(paths) {
         }
 
         document.body.appendChild(a);
-        a.click(); // click on the download link here.
+        a.click();
         a.remove();
     } catch (error) {
         console.error("Download error", error);
