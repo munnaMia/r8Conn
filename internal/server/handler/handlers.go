@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -29,6 +30,11 @@ var (
 	sessionStore = make(map[string][]string)
 	sessionLock  sync.RWMutex
 )
+
+type downloadFile struct {
+	name string
+	path string
+}
 
 func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(maxBufferSize)
@@ -80,88 +86,120 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
 	token := r.URL.Query().Get("token")
 	if token == "" {
-		slog.Error("token not provided")
 		http.Error(w, "provide a token", http.StatusBadRequest)
 		return
 	}
 
 	sessionLock.Lock()
 	paths, exist := sessionStore[token]
+	delete(sessionStore, token)
 	sessionLock.Unlock()
 
 	if !exist {
-		slog.Error("token has been expired or not exist")
 		http.Error(w, "invalid or expire token", http.StatusBadRequest)
 		return
 	}
 
-	// single file transfer
-	if len(paths) == 1 {
-		filePath := filepath.Join(h.config.ShareDir, paths[0])
+	files := make([]downloadFile, 0, len(paths))
+	nameMap := make(map[string]bool)
 
-		info, err := os.Stat(filePath)
+	for _, rawPath := range paths {
+		fullPath, _, err := utils.ResolvePath(h.config.ShareDir, rawPath)
 		if err != nil {
-			slog.Error("failed to get stat about a file", "error", err)
-			http.Error(w, "file not found", http.StatusNotFound)
+			slog.Error("skipping unavailable selected file", "error", err)
+			continue
+		}
+
+		files = append(files, downloadFile{
+			name: utils.GetUniqueFileName(filepath.Base(fullPath), nameMap),
+			path: rawPath,
+		})
+	}
+
+	if len(files) == 0 {
+		http.Error(w, "no valid file found", http.StatusNotFound)
+		return
+	}
+
+	// single file transfer
+	if len(files) == 1 {
+		file, err := os.Open(files[0].path)
+		if err != nil {
+			http.Error(w, "file unavailable", http.StatusNotFound)
+			return
+		}
+		defer file.Close()
+
+		info, err := file.Stat()
+		if err != nil || !info.Mode().IsRegular() {
+			http.Error(w, "file unavailable", http.StatusNotFound)
 			return
 		}
 
-		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, info.Name()))
-		http.ServeFile(w, r, filePath)
+		w.Header().Set("Content-Type", "application/octet-stream")
+		w.Header().Set("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": files[0].name}))
+		w.Header().Set("Content-Length", fmt.Sprintf("%d", info.Size()))
+
+		if _, err = io.Copy(w, file); err != nil {
+			slog.Error("single file transfer failed", "error", err)
+		}
 		return
 	}
 
 	// multiple file transfer
 	w.Header().Set("Content-Type", "application/zip")
 	w.Header().Set("Content-Disposition", `attachment; filename="r8Conn-download.zip"`)
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 
-	nameMap := make(map[string]bool)
 	zipWriter := zip.NewWriter(w)
-	defer zipWriter.Close()
-
-	for _, path := range paths {
-
-		if path == "" {
-			continue
+	defer func() {
+		if err := zipWriter.Close(); err != nil {
+			slog.Error("failed to finalize zip archive", "error", err)
 		}
+	}()
 
-		filePath := filepath.Join(h.config.ShareDir, path)
-
-		file, err := os.Open(filePath)
+	for _, file := range files {
+		f, err := os.Open(file.path)
 		if err != nil {
 			slog.Error("failed to open file", "error", err)
-			continue
+			return
 		}
 
-		info, err := os.Stat(filePath)
-		if err != nil {
+		info, err := f.Stat()
+		if err != nil || !info.Mode().IsRegular() {
 			slog.Error("failed to get stat about a file", "error", err)
-			file.Close()
-			continue
+			f.Close()
+			return
 		}
 
 		header, err := zip.FileInfoHeader(info)
 		if err != nil {
-			slog.Error("failed to assing zip infos", "error", err)
-			file.Close()
-			continue
+			f.Close()
+			slog.Error("failed to create zip header", "error", err)
+			return
 		}
-		header.Name = utils.GetUniqueFileName(path, nameMap)
+
+		header.Name = file.name
 		header.Method = zip.Deflate
 
 		entryWriter, err := zipWriter.CreateHeader(header)
 		if err != nil {
-			slog.Error("failed to create zip header", "error", err)
-			file.Close()
-			continue
+			f.Close()
+			slog.Error("failed to create zip entry", "error", err)
+			return
 		}
 
 		// stream the file on zip
-		_, err = io.Copy(entryWriter, file)
-		file.Close()
+		_, err = io.Copy(entryWriter, f)
+		closeErr := f.Close()
 		if err != nil {
-			slog.Error("failed to copy the data", "error", err)
-			continue
+			slog.Error("failed to copy the data", "path", file.path, "error", err)
+			return
+		}
+
+		if closeErr != nil {
+			slog.Error("failed to close file", "error", err)
+			return
 		}
 
 	}
