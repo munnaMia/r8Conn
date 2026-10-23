@@ -542,8 +542,10 @@ async function downloadProcess(paths) {
 
         const a = document.createElement("a");
         a.href = downloadURL;
-        if (ToDownloadPaths.length > 1) {
-            a.download = "r8Conn_download.zip";
+        if (ToDownloadPaths.length === 1) {
+            a.download = ToDownloadPaths[0].toString().replace(/\\/g, "/").split("/").pop();
+        } else {
+            a.download = `r8Conn_download_${token.slice(0, 5)}.zip`;
         }
 
         document.body.appendChild(a);
