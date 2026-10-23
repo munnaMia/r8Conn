@@ -3,6 +3,7 @@ package handler
 import (
 	"archive/zip"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -20,6 +21,7 @@ import (
 const (
 	maxRequestSize = 1 << 20  // 1 MB
 	maxBufferSize  = 10 << 20 //10 MB
+	maxPathsLimit  = 500
 	tokenLifeTime  = 5 * time.Minute
 )
 
@@ -166,18 +168,45 @@ func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getDownloadToken(w http.ResponseWriter, r *http.Request) {
+	r.Body = http.MaxBytesReader(w, r.Body, maxRequestSize)
+	defer r.Body.Close()
+
 	var req DownloadRequest
 	var tkRes TokenResponse
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || len(req.Paths) == 0 {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		var maxErr http.MaxBytesError
+		if errors.Is(err, &maxErr) {
+			http.Error(w, "request body is too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+		http.Error(w, "invalid request", http.StatusBadRequest)
 		return
+	}
+
+	if len(req.Paths) == 0 || len(req.Paths) > maxPathsLimit {
+		http.Error(w, "selected path 0 or more them limit", http.StatusBadRequest)
+		return
+	}
+
+	validPaths := make([]string, 0)
+
+	for _, path := range req.Paths {
+		_, _, err := utils.ResolvePath(h.config.ShareDir, path)
+		if err != nil {
+			slog.Error("rejected selected path", "error", err)
+			http.Error(w, "one or more paths are invalid", http.StatusBadRequest)
+			return
+		}
+
+		rel := filepath.Clean(filepath.FromSlash(strings.TrimSpace(path)))
+		validPaths = append(validPaths, filepath.ToSlash(rel))
 	}
 
 	tkRes.Token = utils.GenerateToken()
 
 	sessionLock.Lock()
-	sessionStore[tkRes.Token] = req.Paths
+	sessionStore[tkRes.Token] = validPaths
 	sessionLock.Unlock()
 
 	// delete auto matically session after 5 minute
