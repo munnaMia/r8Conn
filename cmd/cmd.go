@@ -39,14 +39,12 @@ func Run() {
 	h := handler.NewHandler(cfg)
 
 	if cfg.CLI {
-		// start the TUI mode
 		if err := tui.Run(h, cfg); err != nil {
 			slog.Error("Failed to run TUI", "error", err)
 			return
 		}
 	} else {
-		// run the GUI mode
-		if err := gui.Run(); err != nil {
+		if err := gui.Run(h, cfg); err != nil {
 			slog.Error("failed to run the GUI", "error", err)
 			return
 		}
