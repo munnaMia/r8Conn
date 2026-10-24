@@ -457,7 +457,7 @@ body {
     overflow: hidden;
 }
 
-.file-share-sub-container{
+.file-share-sub-container {
     display: flex;
     gap: 8px;
     align-items: center;
@@ -728,8 +728,8 @@ body {
     color: var(--text-secondary);
 }
 
-.no-content-smsg{
-    font-size: .8rem;
+.no-content-smsg {
+    font-size: 0.8rem;
     font-weight: 400;
     color: var(--text-muted);
 }

@@ -110,15 +110,6 @@
                         </div>
                     </div>
 
-                    <!-- Search bar and controls -->
-                    <div class="search-row">
-                        <div class="search-box">
-                            <img class="icon-img sm" src="assets/icons/search.svg" alt="Search" />
-                            <input type="text" name="search" oninput="filterSharedFiles()" id="searchInput" placeholder="Search here..." />
-                        </div>
-                        <button onclick="toggleSelectAllShared()" class="btn-secondary-block">Select All</button>
-                    </div>
-
                     <!-- items summary -->
                     <div class="item-summary-container">
                         <span>Total Items (<span id="sharedItemCount">0</span>)</span>
@@ -130,7 +121,7 @@
 
                     <!-- download btn -->
                     <div class="download-btn-container">
-                        <button disabled id="downloadNowBtn" onclick="downloadSeletedFiles()" class="btn-primary-block hidden">
+                        <button id="downloadNowBtn" onclick="downloadSeletedFiles()" class="btn-primary-block hidden">
                             <img class="icon-img white-icon md" src="assets/icons/download.svg" alt="Download" />
                             <span id="downloadBtnText">Download</span>
                         </button>
@@ -138,8 +129,6 @@
                 </section>
             </main>
         </div>
-
-        
 
         <!-- Tansfer Model -->
         <div id="transferModal" class="modal-backdrop hidden">

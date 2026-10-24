@@ -7,141 +7,7 @@ let selectedUploadFiles = [];
 let recentSentFiles = [];
 
 // remove test data and fetch from api latter
-let sharedFiles = [
-    {
-        id: 0,
-        name: "Screenshot From 2026-10-08 13-11-32.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-08 13-11-32.png",
-        size: 76023,
-    },
-
-    {
-        id: 1,
-        name: "Screenshot From 2026-10-14 15-36-47.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-14 15-36-47.png",
-        size: 101366,
-    },
-    {
-        id: 2,
-        name: "Screenshot From 2026-10-15 13-44-31.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-15 13-44-31.png",
-        size: 50374,
-    },
-    {
-        id: 3,
-        name: "Screenshot From 2026-10-15 14-13-49.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-15 14-13-49.png",
-        size: 29241,
-    },
-    {
-        id: 4,
-        name: "Screenshot From 2026-10-15 15-25-54.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-15 15-25-54.png",
-        size: 21327,
-    },
-    {
-        id: 5,
-        name: "Screenshot From 2026-10-15 22-24-45.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-24-45.png",
-        size: 382464,
-    },
-    {
-        id: 6,
-        name: "Screenshot From 2026-10-15 22-49-39.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-15 22-49-39.png",
-        size: 276267,
-    },
-    {
-        id: 7,
-        name: "Screenshot From 2026-10-15 23-04-48.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-15 23-04-48.png",
-        size: 419692,
-    },
-    {
-        id: 8,
-        name: "Screenshot From 2026-10-16 10-40-13.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-40-13.png",
-        size: 738011,
-    },
-    {
-        id: 77,
-        name: "Screenshot From 2026-10-16 10-41-06.png",
-        path: "Pictures/Screenshots/Screenshot From 2026-10-16 10-41-06.png",
-        size: 521173,
-    },
-    {
-        id: 55,
-        name: "Screenshot From 2026-10-07 11-36-54.png",
-        path: "Screenshot From 2026-10-07 11-36-54.png",
-        size: 35916,
-    },
-    {
-        id: 56,
-        name: "Screenshot From 2026-10-08 11-43-51.png",
-        path: "Screenshot From 2026-10-08 11-43-51.png",
-        size: 37754,
-    },
-    {
-        id: 58,
-        name: "System Analysis concept.1st week.pdf",
-        path: "university document/System Analysis concept.1st week.pdf",
-        size: 176037,
-    },
-    {
-        id: 59,
-        name: "case study 3rd week SDLC.pdf",
-        path: "university document/case study 3rd week SDLC.pdf",
-        size: 187407,
-    },
-    {
-        id: 12,
-        name: "ch3_1_v1.ppt (1).pdf",
-        path: "university document/ch3_1_v1.ppt (1).pdf",
-        size: 2332978,
-    },
-    {
-        id: 13,
-        name: "ch3_1_v1.ppt.pdf",
-        path: "university document/ch3_1_v1.ppt.pdf",
-        size: 2332978,
-    },
-    {
-        id: 14,
-        name: "ch3_2_v1.ppt.pdf",
-        path: "university document/ch3_2_v1.ppt.pdf",
-        size: 995171,
-    },
-    {
-        id: 15,
-        name: "ch3_3_v1.ppt.pdf",
-        path: "university document/ch3_3_v1.ppt.pdf",
-        size: 855704,
-    },
-    {
-        id: 25,
-        name: "ch3_4_v1.ppt.pdf",
-        path: "university document/ch3_4_v1.ppt.pdf",
-        size: 522412,
-    },
-    {
-        id: 26,
-        name: "ch3_5_v1.ppt.pdf",
-        path: "university document/ch3_5_v1.ppt.pdf",
-        size: 659263,
-    },
-    {
-        id: 36,
-        name: "system analysis 2nd week (1).pdf",
-        path: "university document/system analysis 2nd week (1).pdf",
-        size: 275087,
-    },
-    {
-        id: 446,
-        name: "system analysis 2nd week.pdf",
-        path: "university document/system analysis 2nd week.pdf",
-        size: 275087,
-    },
-];
+let sharedFiles;
 let hasSelectedDownloadIds = new Set();
 let subFolders = new Set();
 
@@ -499,16 +365,43 @@ function renderSharedFiles() {
     const curDirInfo = getCurrentDirectoryInfo();
 
     // filter out files based on folder name its complecated and developer own logic so sorry if u feel odd for this one
-    let itemToShow = sharedFiles.filter((f) => f.dirList[curDirInfo.dir_level] === curDirInfo.name);
+    let itemToShow = sharedFiles.filter((f) => {
+        return f.dirList[curDirInfo.dir_level] === curDirInfo.name && f.dirList.length - 1 === curDirInfo.dir_level;
+    });
+
+    subFolders.clear(); // clear the sub folder set before rendering
 
     // extract the subfolder names.
-    itemToShow.forEach((f) => {
+    sharedFiles.forEach((f) => {
         if (curDirInfo.dir_level < f.dirList.length - 1) {
             subFolders.add(f.dirList[curDirInfo.dir_level + 1]);
         }
     });
 
-    // render folder first here firse-------------------
+    subFolders.forEach((folder) => {
+        const card = document.createElement("div");
+        card.className = "file-item-card";
+
+        card.onclick = (e) => {
+            // open the folder
+            openFolder(folder);
+        };
+
+        card.innerHTML = `
+        <div class="file-info-group">
+            <div class= "file-share-sub-container">
+                <div class="file-icon-box" style="background-color: var(--amber-light); border-color: #fde68a;">
+                    ${getIconImg("folder")}
+                </div>
+                <div class="file-details">
+                    <div class="file-name" style="cursor: pointer;">${escapeHtml(folder)}</div>
+                </div>
+            </div>
+        </div>
+        `;
+
+        listSharedContainer.appendChild(card);
+    });
 
     itemToShow.forEach((file) => {
         const isSelected = hasSelectedDownloadIds.has(file.id);
@@ -521,9 +414,8 @@ function renderSharedFiles() {
         }
 
         card.onclick = (e) => {
-            if (e.target.tagName !== "INPUT") {
-                toggleSelectDownloadFile(file.id);
-            }
+            if (e.target.closest("button")) return;
+            toggleSelectDownloadFile(file.id);
         };
 
         card.innerHTML = `
@@ -537,7 +429,7 @@ function renderSharedFiles() {
                     <div class="file-meta">${file.formatedSize}</div>
                 </div>
             </div>
-            <button onclick="event.stopPropagation(); downloadSingleFile('${file.path}')" class="btn-remove-file" title="Download File">
+            <button onclick="event.stopPropagation(); downloadFile('${file.path}')" class="btn-remove-file" title="Download File">
                 ${getIconImg("download", "sm")}
             </button>
         </div>
@@ -572,7 +464,7 @@ function renderBreadcrumbs() {
         if (isLast) {
             html += `<span class="breadcrumb-node current">${escapeHtml(folder)}</span>`;
         } else {
-            html += `<span class="breadcrumb-node" onclick="navigateToBreadCrumb(${index})">${escapeHtml(folder)}</span>`;
+            html += `<span class="breadcrumb-node">${escapeHtml(folder)}</span>`;
         }
     });
 
@@ -585,13 +477,17 @@ function renderBreadcrumbs() {
     }
 }
 
+// open a folder
+function openFolder(name) {
+    breadcrumbArray.push(name);
+    renderSharedFiles();
+}
+
 // pop one folder from breadcrumb and render shared files
-function navigateUpDirectory() {}
-
-// navigate through the breadcrumb directory path
-function navigateToBreadCrumb(index) {}
-
-function filterSharedFiles() {}
+function navigateUpDirectory() {
+    breadcrumbArray.pop();
+    renderSharedFiles();
+}
 
 function toggleSelectDownloadFile(id) {
     if (hasSelectedDownloadIds.has(id)) {
@@ -602,26 +498,79 @@ function toggleSelectDownloadFile(id) {
     renderSharedFiles();
 }
 
-function toggleSelectAllShared() {}
+function downloadSeletedFiles() {
+    let pathArrayToDownload = [];
 
-function downloadSingleFile(path) {}
+    sharedFiles.forEach((file) => {
+        if (hasSelectedDownloadIds.has(file.id)) {
+            pathArrayToDownload.push(file.path);
+        }
+    });
 
-function downloadSeletedFiles(paths) {}
+    downloadProcess(pathArrayToDownload);
+}
+
+function downloadFile(path) {
+    const pathArrayToDownload = Array.isArray(path) ? path : [path];
+
+    downloadProcess(pathArrayToDownload);
+}
+
+async function downloadProcess(paths) {
+    const ToDownloadPaths = Array.isArray(paths) ? paths : [paths];
+
+    if (ToDownloadPaths.length === 0) {
+        alert("select files to download");
+        return;
+    }
+
+    try {
+        const response = await fetch("/getDownloadToken", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paths: ToDownloadPaths }),
+        });
+
+        if (!response.ok) {
+            throw new Error("failed to fetch a download session");
+        }
+
+        const data = await response.json();
+        const token = data.token;
+
+        const downloadURL = `/files?token=${encodeURIComponent(token)}`;
+
+        const a = document.createElement("a");
+        a.href = downloadURL;
+
+        if (ToDownloadPaths.length === 1) {
+            a.download = ToDownloadPaths[0].toString().replace(/\\/g, "/").split("/").pop();
+        } else {
+            a.download = `r8Conn_download_${token.slice(0, 5)}.zip`;
+        }
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    } catch (error) {
+        console.error("Download error", error);
+        alert("could not start download. try again");
+    }
+}
 
 // call api to fetch all the files list from backend
 async function getSharedFiles() {
-    // uncommented latter
-    // try {
-    //     const response = await fetch("/filesInfo");
-    //     if (!response.ok) {
-    //         throw new Error(`http error :${response.status}`);
-    //     }
+    try {
+        const response = await fetch("/filesInfo");
+        if (!response.ok) {
+            throw new Error(`http error :${response.status}`);
+        }
 
-    //     res = await response.json();
-    //     sharedFiles = res.data;
-    // } catch (error) {
-    //     console.error("failed to fetch configurations: ", error);
-    // }
+        res = await response.json();
+        sharedFiles = res.data;
+    } catch (error) {
+        console.error("failed to fetch configurations: ", error);
+    }
 
     formatedSharedFilesInfos();
 }
