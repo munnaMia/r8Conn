@@ -112,7 +112,7 @@ func (h *Handler) getFiles(w http.ResponseWriter, r *http.Request) {
 
 		files = append(files, downloadFile{
 			name: utils.GetUniqueFileName(filepath.Base(fullPath), nameMap),
-			path: rawPath,
+			path: fullPath,
 		})
 	}
 
