@@ -6,6 +6,7 @@ import (
 
 	"github.com/munnaMia/r8Conn/internal/cli"
 	"github.com/munnaMia/r8Conn/internal/config"
+	"github.com/munnaMia/r8Conn/internal/gui"
 	"github.com/munnaMia/r8Conn/internal/server/handler"
 	"github.com/munnaMia/r8Conn/internal/tui"
 	"github.com/munnaMia/r8Conn/utils"
@@ -45,5 +46,9 @@ func Run() {
 		}
 	} else {
 		// run the GUI mode
+		if err := gui.Run(); err != nil {
+			slog.Error("failed to run the GUI", "error", err)
+			return
+		}
 	}
 }
