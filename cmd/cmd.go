@@ -5,6 +5,7 @@ import (
 
 	"github.com/munnaMia/r8Conn/internal/cli"
 	"github.com/munnaMia/r8Conn/internal/config"
+	"github.com/munnaMia/r8Conn/internal/db"
 	"github.com/munnaMia/r8Conn/internal/server/handler"
 	"github.com/munnaMia/r8Conn/internal/tui"
 	"github.com/munnaMia/r8Conn/utils"
@@ -21,7 +22,7 @@ func Run() {
 	// parsing cli flags with default configs structs value.
 	cli.ParseFlags(cfg)
 
-	// setup a new logger for the application on production mode 
+	// setup a new logger for the application on production mode
 	// all the logs will store on app.log file and on dubug mode
 	// log will shown on os.stdout or terminal.
 	lg, cleanUp, err := utils.NewLogger(cfg)
@@ -32,8 +33,14 @@ func Run() {
 	defer cleanUp()
 	slog.SetDefault(lg)
 
+	// init sqlite db
+	db, err := db.InitDB(cfg.BaseDir)
+	if err != nil {
+		slog.Error("failed to init db connection", "error", err)
+		return
+	}
 	// initialized a new application handler
-	h := handler.NewHandler(cfg)
+	h := handler.NewHandler(db, cfg)
 
 	if err := tui.Run(h, cfg); err != nil {
 		slog.Error("Failed to run TUI", "error", err)
