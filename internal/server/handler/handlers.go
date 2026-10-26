@@ -8,6 +8,7 @@ import (
 	"io"
 	"log/slog"
 	"mime"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,6 +17,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/munnaMia/r8Conn/internal/db"
 	"github.com/munnaMia/r8Conn/utils"
 )
 
@@ -24,6 +26,8 @@ const (
 	maxBufferSize  = 10 << 20 //10 MB
 	maxPathsLimit  = 500
 	tokenLifeTime  = 5 * time.Minute
+	upload         = "UPLOAD"
+	download       = "DOWNLOAD"
 )
 
 var (
@@ -52,6 +56,8 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 
 	uploadId := r.FormValue("uploadID")
 	fileName := r.FormValue("fileName")
+	fileSize, _ := strconv.ParseInt(r.FormValue("fileSize"), 10, 64)
+	fileIcon := r.FormValue("fileIcon")
 	chunkIdx, _ := strconv.Atoi(r.FormValue("chunkIdx"))
 	totalChunk, _ := strconv.Atoi(r.FormValue("totalChunk"))
 
@@ -76,6 +82,11 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if chunkIdx == totalChunk-1 {
+		// after a success full file transfer write on database
+		deviceId := r.Header.Get("X-Device-Id")
+		clientIp, _, _ := net.SplitHostPort(r.RemoteAddr)
+		db.CreateTransfer(h.db, upload, deviceId, clientIp, fileName, fileIcon, fileSize)
+
 		slog.Info("Successfully upload file", "file", uniqueFileName)
 	}
 
