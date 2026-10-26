@@ -68,7 +68,7 @@ func GetDownloadsPath(baseDir string) (string, error) {
 	return downloadDir, nil
 }
 
-// return bool if a given path is a directory and exists and return the full path
+// return true if a given path is a existing directory and return the full path of the directory
 func IsDir(baseDir, path string) (string, bool) {
 	newPath := filepath.Join(baseDir, path)
 

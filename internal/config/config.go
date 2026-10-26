@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/mdp/qrterminal/v4"
 )
 
@@ -10,20 +12,19 @@ type Config struct {
 	BaseDir     string             `json:"-"`
 	ShareDir    string             `json:"shareDir"`
 	StorageDir  string             `json:"storageDir"`
-	CLI         bool               `json:"-"`
 	AddSource   bool               `json:"-"`
 	Debug       bool               `json:"-"`
 	QrConfig    *qrterminal.Config `json:"-"`
 }
 
 // NewConfig return an instance of config struct with some default values
-func NewConfig() *Config {
-	return &Config{
+func NewConfig() (*Config, error) {
+	var err error
+	cfg := &Config{
 		Port:        0,
 		PreferredIP: "",
 		ShareDir:    "",
 		StorageDir:  "",
-		CLI:         false,
 		AddSource:   false,
 		Debug:       false,
 		QrConfig: &qrterminal.Config{
@@ -34,4 +35,11 @@ func NewConfig() *Config {
 			HalfBlocks: true,
 		},
 	}
+
+	cfg.BaseDir, err = os.UserHomeDir()
+	if err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
 }

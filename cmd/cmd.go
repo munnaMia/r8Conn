@@ -2,23 +2,29 @@ package cmd
 
 import (
 	"log/slog"
-	"os"
 
 	"github.com/munnaMia/r8Conn/internal/cli"
 	"github.com/munnaMia/r8Conn/internal/config"
+	"github.com/munnaMia/r8Conn/internal/db"
 	"github.com/munnaMia/r8Conn/internal/server/handler"
 	"github.com/munnaMia/r8Conn/internal/tui"
 	"github.com/munnaMia/r8Conn/utils"
 )
 
 func Run() {
-	// fetch default config
-	cfg := config.NewConfig()
+	// fetch default configurations with default values
+	cfg, err := config.NewConfig()
+	if err != nil {
+		slog.Error("failed to get user home dir", "error", err)
+		return
+	}
 
-	// initialze cli flags
+	// parsing cli flags with default configs structs value.
 	cli.ParseFlags(cfg)
 
-	// setup a new logger for the application
+	// setup a new logger for the application on production mode
+	// all the logs will store on app.log file and on dubug mode
+	// log will shown on os.stdout or terminal.
 	lg, cleanUp, err := utils.NewLogger(cfg)
 	if err != nil {
 		slog.Error("failed to initialized logger", "error", err)
@@ -27,23 +33,17 @@ func Run() {
 	defer cleanUp()
 	slog.SetDefault(lg)
 
-	// fetch user home dir
-	cfg.BaseDir, err = os.UserHomeDir()
+	// init sqlite db
+	db, err := db.InitDB()
 	if err != nil {
-		slog.Error("failed to get user home dir", "error", err)
+		slog.Error("failed to init db connection", "error", err)
 		return
 	}
-
 	// initialized a new application handler
-	h := handler.NewHandler(cfg)
+	h := handler.NewHandler(db, cfg)
 
-	if cfg.CLI {
-		// start the TUI mode
-		if err := tui.Run(h, cfg); err != nil {
-			slog.Error("Failed to run TUI", "error", err)
-			return
-		}
-	} else {
-		// run the GUI mode
+	if err := tui.Run(h, cfg); err != nil {
+		slog.Error("Failed to run TUI", "error", err)
+		return
 	}
 }

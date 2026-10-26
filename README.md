@@ -7,7 +7,7 @@
 ## 🌟 Key Features
 
 - **Zero Mobile Apps Needed:** Connects directly through your phone's built-in web browser via a locally hosted HTTP server.
-- **Dual-Mode Engine:** Runs seamlessly as a headless **CLI tool** in the terminal or as a native **Desktop Application** powered by Wails.
+- **Dual-Mode Engine:** Runs seamlessly as a headless **CLI tool** in the terminal or as a native **Desktop Application**.
 - **Offline & High Speed:** Transfers files at maximum Wi-Fi Direct / Hotspot network speeds without consuming cellular data.
 - **Terminal & GUI QR Codes:** Automatically generates a local QR code for instant phone browser scanning.
 - **Bidirectional Transfer:** Stream files from Laptop $\rightarrow$ Mobile or upload files from Mobile $\rightarrow$ Laptop effortlessly.
@@ -19,6 +19,9 @@
 
 - **Core Engine:** Go (Golang) standard library (`net`, `net/http`, `io`, `os`)
 - **Desktop GUI:** [Wails v2](https://wails.io/) (Go + HTML/CSS/JS)
+- **QR Code Generation:** [go-qrcode](https://github.com/skip2/go-qrcode)
+- **File Transfer Protocol:** HTTP/HTTPS with streaming support
+- **CLI Framework:** [bubbletea/cli](https://github.com/charmbracelet/bubbletea), lipgloss for terminal UI
 - **Cross-Platform:** Windows, macOS, and Linux
 
 ---
@@ -28,7 +31,7 @@
 ### 1. Network Connection
 Ensure both your laptop and phone are on the same local network:
 - Connect both devices to the same Wi-Fi router, **OR**
-- Enable **Mobile Hotspot** on your phone (Data OFF) and connect your laptop to it.
+- Enable **Mobile Hotspot** on your phone (Data OFF) and connect your laptop wifi to it.
 
 ### 2. Running the Application
 

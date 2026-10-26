@@ -8,6 +8,7 @@ import (
 	"io"
 	"log/slog"
 	"mime"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,6 +17,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/munnaMia/r8Conn/internal/db"
 	"github.com/munnaMia/r8Conn/utils"
 )
 
@@ -24,6 +26,8 @@ const (
 	maxBufferSize  = 10 << 20 //10 MB
 	maxPathsLimit  = 500
 	tokenLifeTime  = 5 * time.Minute
+	upload         = "UPLOAD"
+	// download       = "DOWNLOAD"
 )
 
 var (
@@ -52,6 +56,8 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 
 	uploadId := r.FormValue("uploadID")
 	fileName := r.FormValue("fileName")
+	fileSize, _ := strconv.ParseInt(r.FormValue("fileSize"), 10, 64)
+	fileIcon := r.FormValue("fileIcon")
 	chunkIdx, _ := strconv.Atoi(r.FormValue("chunkIdx"))
 	totalChunk, _ := strconv.Atoi(r.FormValue("totalChunk"))
 
@@ -76,6 +82,11 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if chunkIdx == totalChunk-1 {
+		// after a success full file transfer write on database
+		deviceId := r.Header.Get("X-Device-Id")
+		clientIp, _, _ := net.SplitHostPort(r.RemoteAddr)
+		db.CreateTransfer(h.db, upload, deviceId, clientIp, fileName, fileIcon, fileSize)
+
 		slog.Info("Successfully upload file", "file", uniqueFileName)
 	}
 
@@ -223,7 +234,7 @@ func (h *Handler) getDownloadToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(req.Paths) == 0 || len(req.Paths) > maxPathsLimit {
-		http.Error(w, "selected path 0 or more them limit", http.StatusBadRequest)
+		http.Error(w, "selected path 0 or more them the limit 500", http.StatusBadRequest)
 		return
 	}
 
@@ -262,6 +273,23 @@ func (h *Handler) getDownloadToken(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to encode token json", http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h *Handler) getRecentShares(w http.ResponseWriter, r *http.Request) {
+	deviceId := r.Header.Get("X-Device-Id")
+	transfers, err := db.GetTransfers(h.db, deviceId, upload)
+	if err != nil {
+		http.Error(w, "failed to read database", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(SuccessResponse{
+		Msg:    "Recent shared files",
+		Data:   transfers, /not working read or write issue
+		Status: http.StatusOK,
+	})
 }
 
 func (h *Handler) getFilesInfo(w http.ResponseWriter, r *http.Request) {

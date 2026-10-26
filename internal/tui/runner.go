@@ -148,14 +148,14 @@ func (m model) InitTuiApp() tea.Msg {
 	if m.config.StorageDir != "" {
 		m.config.StorageDir, ok = utils.IsDir(m.config.BaseDir, m.config.StorageDir)
 		if !ok {
-			return ErrMsg(errors.New("Given upload location not exists try another one"))
+			return ErrMsg(errors.New("Given files upload directory is not exists. Try a different one"))
 		}
 	}
 
 	if m.config.ShareDir != "" {
 		m.config.ShareDir, ok = utils.IsDir(m.config.BaseDir, m.config.ShareDir)
 		if !ok {
-			return ErrMsg(errors.New("Given download location not exists try another one"))
+			return ErrMsg(errors.New("Given download directory is not exists. Try a different one"))
 		}
 	}
 
@@ -181,7 +181,7 @@ func (m model) InitTuiApp() tea.Msg {
 	// start the http rest api for file transfering
 	go svr.Start()
 
-	return SuccessMsg("Successfully initialized http server")
+	return SuccessMsg("Successfully initialized local http server and run the CLI")
 }
 
 // generate a proper title box
@@ -223,9 +223,9 @@ func Run(h *handler.Handler, cfg *config.Config) error {
 		handler: h,
 	}
 
-	p := tea.NewProgram(initialModel)
+	tui := tea.NewProgram(initialModel)
 
-	if _, err := p.Run(); err != nil {
+	if _, err := tui.Run(); err != nil {
 		return err
 	}
 	return nil
