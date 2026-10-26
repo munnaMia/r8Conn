@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	_ "modernc.org/sqlite"
 )
 
 // InitDB initializes the SQLite database and runs table migrations
@@ -32,4 +34,26 @@ func InitDB(basePath string) (*sql.DB, error) {
 }
 
 // create necessary tables if not exist
-func createTables(db *sql.DB) error {}
+func createTables(db *sql.DB) error {
+	// direction can be 'UPLOAD' or 'DOWNLOAD'
+	query := `
+	CREATE TABLE IF NOT EXIST devices (
+		id TEXT PRIMARY KEY,
+		name TEXT DEFAULT 'unknown device',
+		last_ip TEXT,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	);
+
+	CREATE TABLE IF NOT EXIST transfers (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		device_id TEXT,
+		filename TEXT,
+		filesize INTEGER,
+		direction TEXT,
+		timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASECADE
+	);
+	`
+	_, err := db.Exec(query)
+	return err
+}
