@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/mdp/qrterminal/v4"
 )
 
@@ -16,8 +18,9 @@ type Config struct {
 }
 
 // NewConfig return an instance of config struct with some default values
-func NewConfig() *Config {
-	return &Config{
+func NewConfig() (*Config, error) {
+	var err error
+	cfg := &Config{
 		Port:        0,
 		PreferredIP: "",
 		ShareDir:    "",
@@ -32,4 +35,11 @@ func NewConfig() *Config {
 			HalfBlocks: true,
 		},
 	}
+
+	cfg.BaseDir, err = os.UserHomeDir()
+	if err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
 }
