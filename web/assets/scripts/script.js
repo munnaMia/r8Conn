@@ -2,6 +2,7 @@ const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 let breadcrumbArray = ["/"]; // level 0 start with '/'
 
 let configuration;
+let deviceID;
 
 let selectedUploadFiles = [];
 let recentSentFiles = [];
@@ -203,6 +204,12 @@ async function startUploadProcess(event) {
 
     if (selectedUploadFiles.length === 0) return;
 
+    deviceID = localStorage.getItem("r8Conn_device_id");
+    if (!deviceID) {
+        deviceID = "r8Conn_" + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem("r8Conn_device_id", deviceID);
+    }
+
     modalTitle.innerText = "Sending to host device";
     modalSub.innerText = `Uploading ${selectedUploadFiles.length} item(s) to ${configuration.storageDir}`;
     progressBar.style.width = "0%";
@@ -238,6 +245,9 @@ async function uploadProcess() {
 
             const response = await fetch("/files", {
                 method: "POST",
+                headers: {
+                    "X-Device-Id": deviceID,
+                },
                 body: formData,
             });
 
