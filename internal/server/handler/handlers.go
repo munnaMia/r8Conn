@@ -275,6 +275,19 @@ func (h *Handler) getDownloadToken(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) getRecentShares(w http.ResponseWriter, r *http.Request) {
+	deviceId := r.Header.Get("X-Device-Id")
+	transfers, err := db.GetTransfers(h.db, deviceId, upload)
+	if err != nil {
+		http.Error(w, "failed to read database", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(transfers)
+}
+
 func (h *Handler) getFilesInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
