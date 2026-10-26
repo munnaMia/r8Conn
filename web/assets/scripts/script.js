@@ -558,10 +558,10 @@ async function downloadProcess(paths) {
     }
 }
 
-// call api to fetch all the files list from backend
-async function getSharedFiles() {
+// call api to fetch all the files list from backend to download
+async function getFileTree() {
     try {
-        const response = await fetch("/filesInfo");
+        const response = await fetch("/filesTree");
         if (!response.ok) {
             throw new Error(`http error :${response.status}`);
         }
@@ -639,7 +639,7 @@ dropZone.addEventListener("drop", (e) => {
 
 window.onload = function () {
     getConfigs();
-    getSharedFiles();
+    getFileTree();
     renderSelectedUploadList();
     renderRecentSentFiles();
     renderSharedFiles();

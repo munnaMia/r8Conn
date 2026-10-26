@@ -223,7 +223,7 @@ func (h *Handler) getDownloadToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(req.Paths) == 0 || len(req.Paths) > maxPathsLimit {
-		http.Error(w, "selected path 0 or more them limit", http.StatusBadRequest)
+		http.Error(w, "selected path 0 or more them the limit 500", http.StatusBadRequest)
 		return
 	}
 

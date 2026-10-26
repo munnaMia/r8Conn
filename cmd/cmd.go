@@ -11,17 +11,19 @@ import (
 )
 
 func Run() {
-	// fetch default config
+	// fetch default configurations with default values
 	cfg, err := config.NewConfig()
 	if err != nil {
 		slog.Error("failed to get user home dir", "error", err)
 		return
 	}
 
-	// initialze cli flags
+	// parsing cli flags with default configs structs value.
 	cli.ParseFlags(cfg)
 
-	// setup a new logger for the application
+	// setup a new logger for the application on production mode 
+	// all the logs will store on app.log file and on dubug mode
+	// log will shown on os.stdout or terminal.
 	lg, cleanUp, err := utils.NewLogger(cfg)
 	if err != nil {
 		slog.Error("failed to initialized logger", "error", err)
