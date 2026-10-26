@@ -2,7 +2,7 @@ const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 let breadcrumbArray = ["/"]; // level 0 start with '/'
 
 let configuration;
-let deviceID;
+let deviceID = localStorage.getItem("r8Conn_device_id");
 
 let selectedUploadFiles = [];
 let recentSentFiles = [];
@@ -204,7 +204,6 @@ async function startUploadProcess(event) {
 
     if (selectedUploadFiles.length === 0) return;
 
-    deviceID = localStorage.getItem("r8Conn_device_id");
     if (!deviceID) {
         deviceID = "r8Conn_" + Math.random().toString(36).substring(2, 15);
         localStorage.setItem("r8Conn_device_id", deviceID);
@@ -579,7 +578,7 @@ async function getFileTree() {
             throw new Error(`http error :${response.status}`);
         }
 
-        res = await response.json();
+        const res = await response.json();
         sharedFiles = res.data;
     } catch (error) {
         console.error("failed to fetch configurations: ", error);
@@ -617,14 +616,35 @@ async function getConfigs() {
             throw new Error(`http error :${response.status}`);
         }
 
-        res = await response.json();
+        const res = await response.json();
         configuration = res.data;
     } catch (error) {
         console.error("failed to fetch configurations: ", error);
     }
 }
 
-function getRecentShared() {}
+async function getRecentShared() {
+    if (!deviceID) return;
+
+    try {
+        const response = fetch("recentShares", {
+            method: "GET",
+            headers: {
+                "X-Device-Id": deviceID,
+            },
+        });
+        if (!response.ok) {
+            throw new Error("failed to fetch recent shared file history");
+        }
+
+        const res = await response.json();
+        const recentSharedFiles = res.data;
+        console.log(recentSharedFiles);
+        // recentSharedFiles.forEach((t) => {
+        //     recentSentFiles.push(t);
+        // });
+    } catch (error) {}
+}
 
 // handle drag and drop feature for file upload
 ["dragenter", "dragover"].forEach((eventName) => {
@@ -655,6 +675,7 @@ dropZone.addEventListener("drop", (e) => {
 window.onload = function () {
     getConfigs();
     getFileTree();
+    getRecentShared();
     renderSelectedUploadList();
     renderRecentSentFiles();
     renderSharedFiles();
