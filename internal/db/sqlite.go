@@ -12,12 +12,12 @@ import (
 
 type TransferRecord struct {
 	Id        int    `json:"id"`
-	DeviceId  string `json:"device_id"`
-	FileName  string `json:"filename"`
+	DeviceId  string `json:"deviceId"`
+	FileName  string `json:"fileName"`
 	FileIcon  string `json:"fileIcon"`
-	FileSize  int64  `json:"filesize"`
+	FileSize  int64  `json:"fileSize"`
 	Direction string `json:"direction"`
-	Timestamp string `json:"timestamp"`
+	Timestamp string `json:"timeStamp"`
 }
 
 // InitDB initializes the SQLite database and runs table migrations
@@ -62,13 +62,13 @@ func createTables(db *sql.DB) error {
 
 	CREATE TABLE IF NOT EXISTS transfers (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		device_id TEXT,
-		filename TEXT,
-		filesize INTEGER,
+		deviceId TEXT,
+		fileName TEXT,
+		fileSize INTEGER,
 		fileIcon TEXT,
 		direction TEXT,
-		timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-		FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASCADE
+		timeStamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (deviceId) REFERENCES devices(id) ON DELETE CASCADE
 	);
 	`
 	_, err := db.Exec(query)
@@ -88,7 +88,7 @@ func CreateTransfer(db *sql.DB, direction, deviceId, clientIp, filename, fileIco
 	)
 
 	_, _ = db.Exec(`
-		INSERT INTO transfers (device_id, filename, filesize, fileIcon, direction)
+		INSERT INTO transfers (deviceId, fileName, fileSize, fileIcon, direction)
 		VALUES (?,?,?,?,?)`,
 		deviceId, filename, filesize, fileIcon, direction)
 }
@@ -96,11 +96,11 @@ func CreateTransfer(db *sql.DB, direction, deviceId, clientIp, filename, fileIco
 // get recent files that transfer history
 func GetTransfers(db *sql.DB, deviceId, direction string) ([]TransferRecord, error) {
 	query := `
-	SELECT id, device_id, filename, filesize, fileIcon, direction, timestamp
+	SELECT id, deviceId, fileName, fileSize, fileIcon, direction, timeStamp
 	FROM (
-		SELECT id, device_id, filename, filesize, fileIcon, direction, timestamp
+		SELECT id, deviceId, fileName, fileSize, fileIcon, direction, timeStamp
 		FROM transfers
-		WHERE device_id = ? AND direction = ?
+		WHERE deviceId = ? AND direction = ?
 		ORDER BY timestamp DESC
 		LIMIT 15
 	)
@@ -120,8 +120,8 @@ func GetTransfers(db *sql.DB, deviceId, direction string) ([]TransferRecord, err
 			&rec.Id,
 			&rec.DeviceId,
 			&rec.FileName,
-			&rec.FileIcon,
 			&rec.FileSize,
+			&rec.FileIcon,
 			&rec.Direction,
 			&rec.Timestamp,
 		); err != nil {

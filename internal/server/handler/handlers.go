@@ -27,7 +27,7 @@ const (
 	maxPathsLimit  = 500
 	tokenLifeTime  = 5 * time.Minute
 	upload         = "UPLOAD"
-	download       = "DOWNLOAD"
+	// download       = "DOWNLOAD"
 )
 
 var (
@@ -285,7 +285,11 @@ func (h *Handler) getRecentShares(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(transfers)
+	json.NewEncoder(w).Encode(SuccessResponse{
+		Msg:    "Recent shared files",
+		Data:   transfers, /not working read or write issue
+		Status: http.StatusOK,
+	})
 }
 
 func (h *Handler) getFilesInfo(w http.ResponseWriter, r *http.Request) {
