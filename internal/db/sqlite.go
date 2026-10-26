@@ -3,11 +3,22 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 
 	_ "modernc.org/sqlite"
 )
+
+type TransferRecord struct {
+	Id        int    `json:"id"`
+	DeviceId  string `json:"device_id"`
+	FileName  string `json:"filename"`
+	FileIcon  string `json:"fileIcon"`
+	FileSize  int64  `json:"filesize"`
+	Direction string `json:"direction"`
+	Timestamp string `json:"timestamp"`
+}
 
 // InitDB initializes the SQLite database and runs table migrations
 func InitDB() (*sql.DB, error) {
@@ -80,4 +91,50 @@ func CreateTransfer(db *sql.DB, direction, deviceId, clientIp, filename, fileIco
 		INSERT INTO transfers (device_id, filename, filesize, fileIcon, direction)
 		VALUES (?,?,?,?,?)`,
 		deviceId, filename, filesize, fileIcon, direction)
+}
+
+// get recent files that transfer history
+func GetTransfers(db *sql.DB, deviceId, direction string) ([]TransferRecord, error) {
+	query := `
+	SELECT id, device_id, filename, filesize, fileIcon, direction, timestamp
+	FROM (
+		SELECT id, device_id, filename, filesize, fileIcon, direction, timestamp
+		FROM transfers
+		WHERE device_id = ? AND direction = ?
+		ORDER BY timestamp DESC
+		LIMIT 15
+	)
+	ORDER BY timestamp ASC;
+	`
+
+	rows, err := db.Query(query, deviceId, direction)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var history []TransferRecord
+	for rows.Next() {
+		var rec TransferRecord
+		if err := rows.Scan(
+			&rec.Id,
+			&rec.DeviceId,
+			&rec.FileName,
+			&rec.FileIcon,
+			&rec.FileSize,
+			&rec.Direction,
+			&rec.Timestamp,
+		); err != nil {
+			slog.Error("failed to get record", "error", err)
+			continue
+		}
+
+		history = append(history, rec)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("itterating history error %w", err)
+	}
+
+	return history, nil
 }
