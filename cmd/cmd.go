@@ -6,7 +6,6 @@ import (
 
 	"github.com/munnaMia/r8Conn/internal/cli"
 	"github.com/munnaMia/r8Conn/internal/config"
-	"github.com/munnaMia/r8Conn/internal/gui"
 	"github.com/munnaMia/r8Conn/internal/server/handler"
 	"github.com/munnaMia/r8Conn/internal/tui"
 	"github.com/munnaMia/r8Conn/utils"
@@ -38,15 +37,8 @@ func Run() {
 	// initialized a new application handler
 	h := handler.NewHandler(cfg)
 
-	if cfg.CLI {
-		if err := tui.Run(h, cfg); err != nil {
-			slog.Error("Failed to run TUI", "error", err)
-			return
-		}
-	} else {
-		if err := gui.Run(h, cfg); err != nil {
-			slog.Error("failed to run the GUI", "error", err)
-			return
-		}
+	if err := tui.Run(h, cfg); err != nil {
+		slog.Error("Failed to run TUI", "error", err)
+		return
 	}
 }

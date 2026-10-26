@@ -10,7 +10,6 @@ type Config struct {
 	BaseDir     string             `json:"-"`
 	ShareDir    string             `json:"shareDir"`
 	StorageDir  string             `json:"storageDir"`
-	CLI         bool               `json:"-"`
 	AddSource   bool               `json:"-"`
 	Debug       bool               `json:"-"`
 	QrConfig    *qrterminal.Config `json:"-"`
@@ -23,7 +22,6 @@ func NewConfig() *Config {
 		PreferredIP: "",
 		ShareDir:    "",
 		StorageDir:  "",
-		CLI:         false,
 		AddSource:   false,
 		Debug:       false,
 		QrConfig: &qrterminal.Config{
