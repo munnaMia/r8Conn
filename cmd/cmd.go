@@ -34,7 +34,7 @@ func Run() {
 	slog.SetDefault(lg)
 
 	// init sqlite db
-	db, err := db.InitDB(cfg.BaseDir)
+	db, err := db.InitDB()
 	if err != nil {
 		slog.Error("failed to init db connection", "error", err)
 		return
