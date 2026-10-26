@@ -227,6 +227,7 @@ async function uploadProcess() {
 
     for (item of selectedUploadFiles) {
         let file = item.rawFile;
+        let fileIcon = item.icon;
         let uploadID = item.id;
         let totalChunk = Math.ceil(file.size / CHUNK_SIZE);
 
@@ -239,6 +240,8 @@ async function uploadProcess() {
             const formData = new FormData();
             formData.append("uploadID", uploadID);
             formData.append("fileName", file.name);
+            formData.append("fileSize", file.size);
+            formData.append("fileIcon", fileIcon);
             formData.append("chunkIdx", chunkIdx);
             formData.append("totalChunk", totalChunk);
             formData.append("chunk", chunk);
@@ -620,6 +623,8 @@ async function getConfigs() {
         console.error("failed to fetch configurations: ", error);
     }
 }
+
+function getRecentShared() {}
 
 // handle drag and drop feature for file upload
 ["dragenter", "dragover"].forEach((eventName) => {
