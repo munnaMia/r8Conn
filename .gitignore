@@ -11,5 +11,3 @@ build/
 # Go workspace / IDE files
 .vscode/
 .idea/
-
-.github/
