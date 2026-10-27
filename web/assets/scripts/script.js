@@ -224,7 +224,7 @@ async function uploadProcess() {
     const totalSizeFormated = formatBytes(totalBytesSize);
     let uploadedBytes = 0;
 
-    for (item of selectedUploadFiles) {
+    for (let item of selectedUploadFiles) {
         let file = item.rawFile;
         let fileIcon = item.icon;
         let uploadID = item.id;
@@ -435,7 +435,7 @@ function renderSharedFiles() {
                 <div class="file-icon-box">
                     ${getIconImg(file.icon)}
                 </div>
-                <div class="file-details" style="max-width: 250px;">
+                <div class="file-details" style="max-width: 220px;">
                     <div class="file-name">${escapeHtml(file.name)}</div>
                     <div class="file-meta">${file.formatedSize}</div>
                 </div>
@@ -648,8 +648,6 @@ async function getRecentShared() {
                 formatedSize: formatBytes(t.fileSize),
             });
         });
-
-        renderRecentSentFiles();
     } catch (error) {
         console.error("failed to fetch recent history", error);
     }
@@ -681,11 +679,10 @@ dropZone.addEventListener("drop", (e) => {
     }
 });
 
-window.onload = function () {
-    getConfigs();
-    getFileTree();
-    getRecentShared();
+window.addEventListener("load", async () => {
+    await Promise.all([getConfigs(), getFileTree(), getRecentShared()]);
+
     renderSelectedUploadList();
     renderRecentSentFiles();
     renderSharedFiles();
-};
+});
