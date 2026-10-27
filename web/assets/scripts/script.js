@@ -1,4 +1,3 @@
-const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 let breadcrumbArray = ["/"]; // level 0 start with '/'
 
 let configuration;
@@ -82,8 +81,6 @@ function switchTab(tab = "upload") {
 
         sectionDownload.classList.remove("hidden");
         sectionUpload.classList.add("hidden");
-
-        renderSharedFiles();
     }
 }
 
@@ -224,15 +221,15 @@ async function uploadProcess() {
     const totalSizeFormated = formatBytes(totalBytesSize);
     let uploadedBytes = 0;
 
-    for (item of selectedUploadFiles) {
+    for (let item of selectedUploadFiles) {
         let file = item.rawFile;
         let fileIcon = item.icon;
         let uploadID = item.id;
-        let totalChunk = Math.ceil(file.size / CHUNK_SIZE);
+        let totalChunk = Math.ceil(file.size / configuration.uploadSpeed);
 
         for (let chunkIdx = 0; chunkIdx < totalChunk; chunkIdx++) {
-            let start = CHUNK_SIZE * chunkIdx;
-            let end = Math.min(start + CHUNK_SIZE, file.size);
+            let start = configuration.uploadSpeed * chunkIdx;
+            let end = Math.min(start + configuration.uploadSpeed, file.size);
 
             const chunk = file.slice(start, end);
 
@@ -305,10 +302,9 @@ function renderRecentSentFiles() {
                             ${getIconImg(item.icon, "sm")}
                             <div class="file-name">${escapeHtml(item.name)}</div>
                         </div>
-                        <span class="file-meta" style="font-size:0.65rem; color: var(--emerald); font-weight: 700;">${item.formatedSize}</span>
+                        <span class="file-meta" style="font-size:0.65rem; color: var(--emerald); font-weight: 700; width: 50px;">${item.formatedSize}</span>
                     `;
 
-        console.log(containerEl);
         recentUploadList.appendChild(containerEl);
     });
 }
@@ -427,16 +423,16 @@ function renderSharedFiles() {
 
         card.onclick = (e) => {
             if (e.target.closest("button")) return;
-            toggleSelectDownloadFile(file.id);
+            toggleSelectDownloadFile(file.id, card);
         };
 
         card.innerHTML = `
-        <div class="file-info-group">
+        <div class="file-info-group" style="justify-content: space-between;">
             <div class="file-share-sub-container">
                 <div class="file-icon-box">
                     ${getIconImg(file.icon)}
                 </div>
-                <div class="file-details">
+                <div class="file-details" style="max-width: 220px;">
                     <div class="file-name">${escapeHtml(file.name)}</div>
                     <div class="file-meta">${file.formatedSize}</div>
                 </div>
@@ -501,13 +497,14 @@ function navigateUpDirectory() {
     renderSharedFiles();
 }
 
-function toggleSelectDownloadFile(id) {
+function toggleSelectDownloadFile(id, cardElement) {
     if (hasSelectedDownloadIds.has(id)) {
         hasSelectedDownloadIds.delete(id);
     } else {
         hasSelectedDownloadIds.add(id);
     }
-    renderSharedFiles();
+
+    cardElement.classList.toggle("selected", hasSelectedDownloadIds.has(id));
 }
 
 function downloadSeletedFiles() {
@@ -627,7 +624,7 @@ async function getRecentShared() {
     if (!deviceID) return;
 
     try {
-        const response = fetch("recentShares", {
+        const response = await fetch("recentShares", {
             method: "GET",
             headers: {
                 "X-Device-Id": deviceID,
@@ -638,12 +635,20 @@ async function getRecentShared() {
         }
 
         const res = await response.json();
-        const recentSharedFiles = res.data;
-        console.log(recentSharedFiles);
-        // recentSharedFiles.forEach((t) => {
-        //     recentSentFiles.push(t);
-        // });
-    } catch (error) {}
+        const recentTransferFiles = res.data;
+
+        recentTransferFiles.forEach((t) => {
+            recentSentFiles.push({
+                id: t.id,
+                name: t.fileName,
+                icon: t.fileIcon,
+                size: t.fileSize,
+                formatedSize: formatBytes(t.fileSize),
+            });
+        });
+    } catch (error) {
+        console.error("failed to fetch recent history", error);
+    }
 }
 
 // handle drag and drop feature for file upload
@@ -672,11 +677,10 @@ dropZone.addEventListener("drop", (e) => {
     }
 });
 
-window.onload = function () {
-    getConfigs();
-    getFileTree();
-    getRecentShared();
+window.addEventListener("load", async () => {
+    await Promise.all([getConfigs(), getFileTree(), getRecentShared()]);
+
     renderSelectedUploadList();
     renderRecentSentFiles();
     renderSharedFiles();
-};
+});

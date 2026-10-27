@@ -86,7 +86,6 @@ func (h *Handler) uploadFiles(w http.ResponseWriter, r *http.Request) {
 		deviceId := r.Header.Get("X-Device-Id")
 		clientIp, _, _ := net.SplitHostPort(r.RemoteAddr)
 		db.CreateTransfer(h.db, upload, deviceId, clientIp, fileName, fileIcon, fileSize)
-
 		slog.Info("Successfully upload file", "file", uniqueFileName)
 	}
 
@@ -283,11 +282,10 @@ func (h *Handler) getRecentShares(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(SuccessResponse{
 		Msg:    "Recent shared files",
-		Data:   transfers, /not working read or write issue
+		Data:   transfers, // not working read or write issue
 		Status: http.StatusOK,
 	})
 }
