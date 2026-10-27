@@ -1,4 +1,3 @@
-const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 let breadcrumbArray = ["/"]; // level 0 start with '/'
 
 let configuration;
@@ -226,11 +225,11 @@ async function uploadProcess() {
         let file = item.rawFile;
         let fileIcon = item.icon;
         let uploadID = item.id;
-        let totalChunk = Math.ceil(file.size / CHUNK_SIZE);
+        let totalChunk = Math.ceil(file.size / configuration.uploadSpeed);
 
         for (let chunkIdx = 0; chunkIdx < totalChunk; chunkIdx++) {
-            let start = CHUNK_SIZE * chunkIdx;
-            let end = Math.min(start + CHUNK_SIZE, file.size);
+            let start = configuration.uploadSpeed * chunkIdx;
+            let end = Math.min(start + configuration.uploadSpeed, file.size);
 
             const chunk = file.slice(start, end);
 

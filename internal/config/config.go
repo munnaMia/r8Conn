@@ -12,6 +12,7 @@ type Config struct {
 	BaseDir     string             `json:"-"`
 	ShareDir    string             `json:"shareDir"`
 	StorageDir  string             `json:"storageDir"`
+	UploadSpeed int                `json:"uploadSpeed"`
 	AddSource   bool               `json:"-"`
 	Debug       bool               `json:"-"`
 	QrConfig    *qrterminal.Config `json:"-"`
@@ -25,6 +26,7 @@ func NewConfig() (*Config, error) {
 		PreferredIP: "",
 		ShareDir:    "",
 		StorageDir:  "",
+		UploadSpeed: 5 * 1024 * 1024, // 5 MB default
 		AddSource:   false,
 		Debug:       false,
 		QrConfig: &qrterminal.Config{

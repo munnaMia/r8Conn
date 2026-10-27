@@ -11,8 +11,13 @@ func ParseFlags(cfg *config.Config) {
 	flag.StringVar(&cfg.PreferredIP, "ip", "", "Manually specify the local IP address. \nDefault IP is empty string and application will find valid one")
 	flag.StringVar(&cfg.ShareDir, "dwd", cfg.PreferredIP, "Directory path to serve the files to share. like: Downloads")
 	flag.StringVar(&cfg.StorageDir, "upd", cfg.PreferredIP, "Directory path to store the uploaded files on host.  like: Downloads")
+	flag.IntVar(&cfg.UploadSpeed, "ups", cfg.UploadSpeed, "Set the file upload speed to host machine. Default is 5 MB per second")
 	flag.BoolVar(&cfg.AddSource, "ads", cfg.AddSource, "Add a Source address with the output")
 	flag.BoolVar(&cfg.Debug, "debug", cfg.Debug, "Exicute on debug mode")
 
 	flag.Parse()
+
+	if cfg.UploadSpeed != 5*1024*1024 {
+		cfg.UploadSpeed = cfg.UploadSpeed * 1024 * 1024 // in megabytes
+	}
 }
