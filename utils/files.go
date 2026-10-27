@@ -58,7 +58,7 @@ func GetFileTree(root string) ([]File, error) {
 
 // return the download path of user system
 func GetDownloadsPath(baseDir string) (string, error) {
-	downloadDir := filepath.Join(baseDir, "Downloads", "r8Conn")
+	downloadDir := filepath.Join(baseDir, "Downloads", "r8Conn Default Location")
 
 	err := os.MkdirAll(downloadDir, 0755)
 	if err != nil {
