@@ -2,5 +2,14 @@
 build/bin
 node_modules
 frontend/dist
-bin
-build
+# Binaries and build outputs
+bin/
+build/
+*.exe
+*.out
+
+# Go workspace / IDE files
+.vscode/
+.idea/
+
+.github/
