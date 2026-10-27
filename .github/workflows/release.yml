@@ -19,16 +19,16 @@ jobs:
         include:
           - os: linux
             arch: amd64
-            ext: ''
+            archive: tar.gz
           - os: windows
             arch: amd64
-            ext: '.exe'
+            archive: zip
           - os: darwin
             arch: amd64
-            ext: ''
+            archive: tar.gz
           - os: darwin
             arch: arm64
-            ext: ''
+            archive: tar.gz
 
     steps:
       - name: Checkout Code
@@ -39,21 +39,33 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Build Binary
-        env:
-          GOOS: ${{ matrix.os }}
-          GOARCH: ${{ matrix.arch }}
+      - name: Build and Archive Binary
+        shell: bash
         run: |
-          BINARY_NAME="r8Conn-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }}"
+          # 1. Define names
+          BINARY_NAME="r8conn"
+          if [ "${{ matrix.os }}" == "windows" ]; then
+            BINARY_NAME="r8conn.exe"
+          fi
+          
+          # 2. Compile Go binary
           go build -ldflags="-s -w" -o "$BINARY_NAME" .
+
+          # 3. Package into archive format
+          ASSET_NAME="r8conn-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.archive }}"
+          
           mkdir -p dist
-          mv "$BINARY_NAME" dist/
+          if [ "${{ matrix.archive }}" == "zip" ]; then
+            zip "dist/$ASSET_NAME" "$BINARY_NAME"
+          else
+            tar -czf "dist/$ASSET_NAME" "$BINARY_NAME"
+          fi
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: r8Conn-${{ matrix.os }}-${{ matrix.arch }}
-          path: dist/r8Conn-*
+          name: artifact-${{ matrix.os }}-${{ matrix.arch }}
+          path: dist/*
 
   release:
     name: Publish GitHub Release
@@ -65,13 +77,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist
-          pattern: r8Conn-*
           merge-multiple: true
 
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/r8Conn-*
+          files: dist/*
           fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
