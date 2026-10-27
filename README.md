@@ -1,13 +1,29 @@
-<div style="display: flex; flex-direction: column; padding: 20px; background-color: #f5f5f5; border-radius:10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-<div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
-<span style="color: #333; font-family: Arial, sans-serif; font-size: 4em;"> r8Conn </span>
-<img src="web/assets/logo/r8Conn.png" style="border-radius:40%;" alt="r8Conn Logo" width="50"/>
+<!-- r8Conn Header -->
 
-</div>
-<p style="color: #555; font-family: Arial, sans-serif; font-size: 0.9rem; line-height: 1.5; margin-right: 20px;">
-<strong>r8Conn</strong> is an ultra-fast, lightweight, cross-platform file transfer cli tool written in Go. It enables seamless file sharing between mobile devices and laptops/PCs over local Wi-Fi or mobile hotspots without requiring internet connectivity or installing third-party apps on your phone.
+<p align="center">
+  <img src="web/assets/logo/r8Conn.png" width="90" alt="r8Conn Logo">
 </p>
-</div>
+
+<h1 align="center">r8Conn</h1>
+
+<p align="center">
+  <strong>Files Without Frictions</strong>
+</p>
+
+<p align="center">
+  A lightweight, cross-platform file-sharing application written in Go.
+  Transfer files between your phone and computer over local Wi-Fi or a
+  mobile hotspot — without requiring an internet connection or a dedicated
+  mobile app.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Language-Go-00ADD8?logo=go" alt="Built with Go">
+  <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20macOS-blue" alt="Cross-platform">
+  <img src="https://img.shields.io/badge/Network-Local%20%2F%20Offline-success" alt="Local network">
+</p>
+
+
 
 ---
 
