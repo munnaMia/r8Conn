@@ -127,7 +127,8 @@ To **run** headless inside your terminal:
 
 - **PORT:** If you encounter a "port already in use" error, try specifying a different port using the `-p` flag.
 - **IP ADDRESS:** If your laptop has multiple network interfaces, you can specify the desired IP address using the `-ip` flag.
-- **DIRECTORY:** <p style="color: red; display: inline;">Keep in mind provide direcories that exist on use use home directory. or leave empty app will create or find /Downloads/r8Conn. </p>Use the `-dwd` flag to specify the directory from which files will be shared. The `-uwd` flag allows you to set the directory where uploaded files will be stored on the host machine.
+- **DIRECTORY:** *Keep in mind provide direcories that exist on use use home directory. or leave empty app will create or find /Downloads/r8Conn.* </br>
+Use the `-dwd` flag to specify the directory from which files will be shared. The `-uwd` flag allows you to set the directory where uploaded files will be stored on the host machine.
 
 ## How to build the application platform-specific binaries
 ```bash
@@ -147,4 +148,4 @@ GOOS=darwin GOARCH=arm64 go build -o build/bin/r8Conn-darwin-arm64
 ```
 
 
-### <p style="color: orange; display: inline;">Please note that the application is designed to work in a local network environment. It does not require an internet connection for file transfers, making it ideal for offline scenarios.</p>
+## !!Please note that the application is designed to work in a local network environment. It does not require an internet connection for file transfers, making it ideal for offline scenarios.
