@@ -82,8 +82,6 @@ function switchTab(tab = "upload") {
 
         sectionDownload.classList.remove("hidden");
         sectionUpload.classList.add("hidden");
-
-        renderSharedFiles();
     }
 }
 
@@ -426,7 +424,7 @@ function renderSharedFiles() {
 
         card.onclick = (e) => {
             if (e.target.closest("button")) return;
-            toggleSelectDownloadFile(file.id);
+            toggleSelectDownloadFile(file.id, card);
         };
 
         card.innerHTML = `
@@ -500,13 +498,14 @@ function navigateUpDirectory() {
     renderSharedFiles();
 }
 
-function toggleSelectDownloadFile(id) {
+function toggleSelectDownloadFile(id, cardElement) {
     if (hasSelectedDownloadIds.has(id)) {
         hasSelectedDownloadIds.delete(id);
     } else {
         hasSelectedDownloadIds.add(id);
     }
-    renderSharedFiles();
+
+    cardElement.classList.toggle("selected", hasSelectedDownloadIds.has(id));
 }
 
 function downloadSeletedFiles() {

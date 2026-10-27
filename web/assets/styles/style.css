@@ -443,6 +443,11 @@ body {
         box-shadow 0.2s;
 }
 
+.file-item-card.selected {
+    border-color: var(--primary);
+    background-color: var(--primary-light);
+}
+
 .file-item-card:hover {
     border-color: var(--border-hover);
     box-shadow: var(--shadow-md);
@@ -529,7 +534,7 @@ body {
     overflow-y: auto;
 }
 
-@media (max-width:767px) {
+@media (max-width: 767px) {
     .modal-backdrop {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
