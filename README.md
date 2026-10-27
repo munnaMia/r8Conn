@@ -14,19 +14,21 @@
 ## 🌟 Key Features
 
 - **Zero Mobile Apps Needed:** Connects directly through your phone's built-in web browser via a locally hosted HTTP server.
-- **Offline & High Speed:** Transfers files at maximum Wi-Fi Direct / Hotspot network speeds without consuming cellular data.
+- **High Speed:** Files transfer at available Wi-Fi Direct / Hotspot network speeds. or can be limited by the `-ups` flag to set the upload speed in MB/s.
+- **Offline Functionality:** Operates entirely offline, ensuring privacy and security without relying on external servers. both devices must be on the same local network (Wi-Fi or Hotspot).
 - **Terminal UI:** Automatically generates a local QR code for instant phone browser scanning.
 - **Bidirectional Transfer:** Stream files from Laptop $\rightarrow$ Mobile or upload files from Mobile $\rightarrow$ Laptop effortlessly.
 - **Memory Efficient:** Engineered with Go streaming protocols to handle multi-gigabyte files with minimal RAM utilization.
+- **History Tracking:** Maintains a local SQLite database to log all file transfers for easy reference.
 ---
 
 ## 🛠️ Tech Stack
 
 - **Core Engine:** Go (Golang) standard library (`net`, `net/http`, `io`, `os`)
 - **QR Code Generation:** [go-qrcode](https://github.com/skip2/go-qrcode)
-- **File Transfer Protocol:** HTTP/HTTPS with streaming support
-- **CLI Framework:** [bubbletea/cli](https://github.com/charmbracelet/bubbletea), lipgloss for terminal UI
-- **Database:** sqlite for storing transfer history.
+- **File Transfer Protocol:** [HTTP/HTTPS](https://golang.org/pkg/net/http/) with streaming support
+- **CLI Framework:** [bubbletea/cli](https://github.com/charmbracelet/bubbletea), [lipgloss](https://github.com/charmbracelet/lipgloss) for terminal UI
+- **Database:** [sqlite](https://modernc.org/sqlite) for storing transfer history.
 
 ---
 
@@ -41,9 +43,30 @@ Ensure both your laptop and phone are on the same local network:
 
 ### 2. Running the Application
 
+#### Get the repository and build the application:
+
+```bash
+# Clone your repository
+git clone https://github.com/munnaMia/r8Conn.git
+
+# Navigate to the project directory
+cd r8Conn
+
+# Install dependencies and tidy up the Go modules
+go mod tidy
+
+# Build the application
+go build -o r8Conn .
+
+# Run the application on 8080 port or leave empty to use OS-assigned port
+./r8Conn -p 8080 
+# or
+./r8Conn
+```
+
 #### **CLI Mode (Terminal)**
 
-To run headless inside your terminal:
+To **run** headless inside your terminal:
 
 ```bash
 # Start the application with default settings (OS-assigned IP & port)
@@ -74,6 +97,9 @@ To run headless inside your terminal:
 # Directory path to store uploaded files on the host (Upload directory). default is the Downloads/r8Conn if not exists cli create the directory
 ./r8Conn -uwd Downloads/Uploads
 
+# set the file upload speed in MB/s (e.g. 5 mean 5 MB per second)
+./r8Conn -ups 20 # mean 20 MB/s
+
 # Include the source address in the console/output display.
 ./r8Conn -ads	
 
@@ -86,3 +112,23 @@ To run headless inside your terminal:
 - **PORT:** If you encounter a "port already in use" error, try specifying a different port using the `-p` flag.
 - **IP ADDRESS:** If your laptop has multiple network interfaces, you can specify the desired IP address using the `-ip` flag.
 - **DIRECTORY:** <p style="color: red; display: inline;">Keep in mind provide direcories that exist on use use home directory. or leave empty app will create or find /Downloads/r8Conn. </p>Use the `-dwd` flag to specify the directory from which files will be shared. The `-uwd` flag allows you to set the directory where uploaded files will be stored on the host machine.
+
+## How to build the application platform-specific binaries
+```bash
+mkdir -p build/bin
+
+# For Linux
+GOOS=linux GOARCH=amd64 go build -o build/bin/r8Conn-linux-amd64
+
+#for Windows
+GOOS=windows GOARCH=amd64 go build -o build/bin/r8Conn-windows-amd64.exe
+
+# For MacOS
+GOOS=darwin GOARCH=amd64 go build -o build/bin/r8Conn-darwin-amd64
+
+# For MacOS ARM64 (Apple Silicon)
+GOOS=darwin GOARCH=arm64 go build -o build/bin/r8Conn-darwin-arm64
+```
+
+
+### <p style="color: orange; display: inline;">Please note that the application is designed to work in a local network environment. It does not require an internet connection for file transfers, making it ideal for offline scenarios.</p>
