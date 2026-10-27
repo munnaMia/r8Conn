@@ -770,6 +770,12 @@ body {
     }
 }
 
+@media (max-width: 640px) {
+    .file-details {
+        max-width: 140px;
+    }
+}
+
 @media (max-width: 359px) {
     .app-header {
         padding: 10px 10px 6px 10px;

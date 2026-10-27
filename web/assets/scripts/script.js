@@ -432,7 +432,7 @@ function renderSharedFiles() {
                 <div class="file-icon-box">
                     ${getIconImg(file.icon)}
                 </div>
-                <div class="file-details" style="max-width: 220px;">
+                <div class="file-details">
                     <div class="file-name">${escapeHtml(file.name)}</div>
                     <div class="file-meta">${file.formatedSize}</div>
                 </div>
