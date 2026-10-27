@@ -451,7 +451,6 @@ body {
 .file-info-group {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     width: 100%;
     gap: 12px;
     overflow: hidden;
@@ -478,6 +477,7 @@ body {
 
 .file-details {
     overflow: hidden;
+    max-width: 200px;
 }
 
 .file-name {
@@ -667,11 +667,11 @@ body {
     flex: 1;
     max-width: 350px;
 }
+
 .breadcrumb-node {
     color: var(--text-muted);
     font-size: 0.75rem;
     font-weight: 500;
-    cursor: pointer;
 }
 
 .current {

@@ -305,7 +305,7 @@ function renderRecentSentFiles() {
                             ${getIconImg(item.icon, "sm")}
                             <div class="file-name">${escapeHtml(item.name)}</div>
                         </div>
-                        <span class="file-meta" style="font-size:0.65rem; color: var(--emerald); font-weight: 700;">${item.formatedSize}</span>
+                        <span class="file-meta" style="font-size:0.65rem; color: var(--emerald); font-weight: 700; width: 50px;">${item.formatedSize}</span>
                     `;
 
         recentUploadList.appendChild(containerEl);
@@ -430,12 +430,12 @@ function renderSharedFiles() {
         };
 
         card.innerHTML = `
-        <div class="file-info-group">
+        <div class="file-info-group" style="justify-content: space-between;">
             <div class="file-share-sub-container">
                 <div class="file-icon-box">
                     ${getIconImg(file.icon)}
                 </div>
-                <div class="file-details">
+                <div class="file-details" style="max-width: 250px;">
                     <div class="file-name">${escapeHtml(file.name)}</div>
                     <div class="file-meta">${file.formatedSize}</div>
                 </div>
