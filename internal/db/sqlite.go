@@ -89,7 +89,7 @@ func CreateTransfer(db *sql.DB, direction, deviceId, clientIp, filename, fileIco
 
 	_, _ = db.Exec(`
 		INSERT INTO transfers (deviceId, fileName, fileSize, fileIcon, direction)
-		VALUES (?,?,?,?,?)`,
+		VALUES (?, ?, ?, ?, ?)`,
 		deviceId, filename, filesize, fileIcon, direction)
 }
 

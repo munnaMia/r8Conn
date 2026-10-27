@@ -308,7 +308,6 @@ function renderRecentSentFiles() {
                         <span class="file-meta" style="font-size:0.65rem; color: var(--emerald); font-weight: 700;">${item.formatedSize}</span>
                     `;
 
-        console.log(containerEl);
         recentUploadList.appendChild(containerEl);
     });
 }
@@ -627,7 +626,7 @@ async function getRecentShared() {
     if (!deviceID) return;
 
     try {
-        const response = fetch("recentShares", {
+        const response = await fetch("recentShares", {
             method: "GET",
             headers: {
                 "X-Device-Id": deviceID,
@@ -638,12 +637,22 @@ async function getRecentShared() {
         }
 
         const res = await response.json();
-        const recentSharedFiles = res.data;
-        console.log(recentSharedFiles);
-        // recentSharedFiles.forEach((t) => {
-        //     recentSentFiles.push(t);
-        // });
-    } catch (error) {}
+        const recentTransferFiles = res.data;
+
+        recentTransferFiles.forEach((t) => {
+            recentSentFiles.push({
+                id: t.id,
+                name: t.fileName,
+                icon: t.fileIcon,
+                size: t.fileSize,
+                formatedSize: formatBytes(t.fileSize),
+            });
+        });
+
+        renderRecentSentFiles();
+    } catch (error) {
+        console.error("failed to fetch recent history", error);
+    }
 }
 
 // handle drag and drop feature for file upload
