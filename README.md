@@ -23,8 +23,6 @@
   <img src="https://img.shields.io/badge/Network-Local%20%2F%20Offline-success" alt="Local network">
 </p>
 
-
-
 ---
 
 ## 🌟 Key Features
@@ -36,6 +34,7 @@
 - **Bidirectional Transfer:** Stream files from Laptop $\rightarrow$ Mobile or upload files from Mobile $\rightarrow$ Laptop effortlessly.
 - **Memory Efficient:** Engineered with Go streaming protocols to handle multi-gigabyte files with minimal RAM utilization.
 - **History Tracking:** Maintains a local SQLite database to log all file transfers for easy reference.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -75,12 +74,43 @@ go mod tidy
 go build -o r8Conn .
 
 # Run the application on 8080 port or leave empty to use OS-assigned port
-./r8Conn -p 8080 
+./r8Conn -p 8080
 # or
 ./r8Conn
 ```
 
-#### **CLI Mode (Terminal)**
+## 📦 Installation & Usage
+
+You can download the pre-compiled binary for your operating system directly from the [Releases Page](https://github.com/munnaMia/r8Conn/releases/latest).
+
+### For Linux & macOS (One-Line Install)
+
+If you are on Linux or macOS, you can install the latest release directly to `/usr/local/bin` using the following command:
+
+**For Linux (AMD64):**
+
+```bash
+curl -sL [https://github.com/munnaMia/r8Conn/releases/latest/download/r8conn-linux-amd64.tar.gz](https://github.com/munnaMia/r8Conn/releases/latest/download/r8conn-linux-amd64.tar.gz) | tar -xz && sudo mv r8conn /usr/local/bin/r8conn
+```
+
+**For Macos (AMD64/Intel):**
+
+```bash
+curl -sL https://github.com/munnaMia/r8Conn/releases/latest/download/r8Conn-linux-amd64.tar.gz | tar -xz && sudo mv r8Conn /usr/local/bin/r8Conn
+```
+
+**For Macos (ARM64/Apple Silicon):**
+
+```bash
+curl -sL https://github.com/munnaMia/r8Conn/releases/latest/download/r8Conn-darwin-arm64.tar.gz | tar -xz && sudo mv r8Conn /usr/local/bin/r8Conn
+```
+
+**For Windows (AMD64):**
+1. Download the latest release from the [Releases Page](https://github.com/munnaMia/r8Conn/releases/latest)
+2. Extract the archive and run the `r8conn-windows-amd64.exe` executable.
+3. Run it directly from your terminal or add its folder to your system PATH.
+
+## **CLI Mode (Terminal)**
 
 To **run** headless inside your terminal:
 
@@ -108,7 +138,7 @@ To **run** headless inside your terminal:
 ./r8Conn -ip 192.168.1.100
 
 # Select dirctory to share file from (e.g., Downloads folder)
-./r8Conn -dwd Downloads 
+./r8Conn -dwd Downloads
 
 # Directory path to store uploaded files on the host (Upload directory). default is the Downloads/r8Conn if not exists cli create the directory
 ./r8Conn -uwd Downloads/Uploads
@@ -117,20 +147,21 @@ To **run** headless inside your terminal:
 ./r8Conn -ups 20 # mean 20 MB/s
 
 # Include the source address in the console/output display.
-./r8Conn -ads	
+./r8Conn -ads
 
 # Execute the application in debug mode for verbose logging.
-./r8Conn -debug	
+./r8Conn -debug
 ```
 
-## Notes: 
+## Notes:
 
 - **PORT:** If you encounter a "port already in use" error, try specifying a different port using the `-p` flag.
 - **IP ADDRESS:** If your laptop has multiple network interfaces, you can specify the desired IP address using the `-ip` flag.
-- **DIRECTORY:** *Keep in mind provide direcories that exist on use use home directory. or leave empty app will create or find /Downloads/r8Conn.* </br>
-Use the `-dwd` flag to specify the directory from which files will be shared. The `-uwd` flag allows you to set the directory where uploaded files will be stored on the host machine.
+- **DIRECTORY:** _Keep in mind provide direcories that exist on use use home directory. or leave empty app will create or find /Downloads/r8Conn._ </br>
+  Use the `-dwd` flag to specify the directory from which files will be shared. The `-uwd` flag allows you to set the directory where uploaded files will be stored on the host machine.
 
 ## How to build the application platform-specific binaries
+
 ```bash
 mkdir -p build/bin
 
@@ -146,6 +177,5 @@ GOOS=darwin GOARCH=amd64 go build -o build/bin/r8Conn-darwin-amd64
 # For MacOS ARM64 (Apple Silicon)
 GOOS=darwin GOARCH=arm64 go build -o build/bin/r8Conn-darwin-arm64
 ```
-
 
 ## !!Please note that the application is designed to work in a local network environment. It does not require an internet connection for file transfers, making it ideal for offline scenarios.

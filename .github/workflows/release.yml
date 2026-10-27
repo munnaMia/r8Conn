@@ -42,17 +42,16 @@ jobs:
       - name: Build and Archive Binary
         shell: bash
         run: |
-          # 1. Define names
-          BINARY_NAME="r8conn"
+          BINARY_NAME="r8Conn"
           if [ "${{ matrix.os }}" == "windows" ]; then
-            BINARY_NAME="r8conn.exe"
+            BINARY_NAME="r8Conn.exe"
           fi
           
-          # 2. Compile Go binary
+          # Compile Go binary
           go build -ldflags="-s -w" -o "$BINARY_NAME" .
 
-          # 3. Package into archive format
-          ASSET_NAME="r8conn-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.archive }}"
+          # Asset name matching the README links with proper case
+          ASSET_NAME="r8Conn-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.archive }}"
           
           mkdir -p dist
           if [ "${{ matrix.archive }}" == "zip" ]; then
