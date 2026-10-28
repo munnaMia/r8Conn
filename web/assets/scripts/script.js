@@ -370,19 +370,24 @@ function renderSharedFiles() {
     }
 
     downloadBtn.classList.remove("hidden");
-    const curDirInfo = getCurrentDirectoryInfo();
 
-    // filter out files based on folder name its complecated and developer own logic so sorry if u feel odd for this one
+    const currentPath = breadcrumbArray;
+    const currentLevel = currentPath.length - 1;
+
+    function isInsideCurrentDir(file) {
+        return currentPath.every((segment, index) => file.dirList[index] === segment);
+    }
+
     let itemToShow = sharedFiles.filter((f) => {
-        return f.dirList[curDirInfo.dir_level] === curDirInfo.name && f.dirList.length - 1 === curDirInfo.dir_level;
+        return isInsideCurrentDir(f) && f.dirList.length === currentPath.length;
     });
 
     subFolders.clear(); // clear the sub folder set before rendering
 
     // extract the subfolder names.
     sharedFiles.forEach((f) => {
-        if (curDirInfo.dir_level < f.dirList.length - 1) {
-            subFolders.add(f.dirList[curDirInfo.dir_level + 1]);
+        if (isInsideCurrentDir(f) && f.dirList.length > currentPath.length) {
+            subFolders.add(f.dirList[currentLevel + 1]);
         }
     });
 
@@ -445,15 +450,6 @@ function renderSharedFiles() {
 
         listSharedContainer.appendChild(card);
     });
-}
-
-// return info about current dir name and its level
-function getCurrentDirectoryInfo() {
-    const Dir_Level = breadcrumbArray.length - 1;
-    return {
-        name: breadcrumbArray[Dir_Level],
-        dir_level: Dir_Level,
-    };
 }
 
 // download tab breadcrumb section
