@@ -590,7 +590,7 @@ function formatedSharedFilesInfos() {
 
     sharedFiles.forEach((file) => {
         file["dirList"] = getDirList(file.path);
-        file["icon"] = getIconImg(getFileIconName(file.name));
+        file["icon"] = getFileIconName(file.name);
         file["formatedSize"] = formatBytes(file.size);
     });
 }
