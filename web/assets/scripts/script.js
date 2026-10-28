@@ -396,7 +396,6 @@ function renderSharedFiles() {
         card.className = "file-item-card";
 
         card.onclick = (e) => {
-            // open the folder
             openFolder(folder);
         };
 
@@ -593,12 +592,10 @@ function formatedSharedFilesInfos() {
 
 // subtract all the folders name and remove file names and return an array
 function getDirList(path) {
-    let pathArray = ["/"];
-    let folders = path.toString().replace(/\\/g, "/").split("/");
-    folders.forEach((f) => pathArray.push(f));
-    pathArray.pop();
+    const pathParts = String(path).replace(/\\/g, "/").split("/").filter(Boolean)
+    pathParts.pop()
 
-    return pathArray;
+    return ["/", ...pathParts]
 }
 
 async function getConfigs() {
