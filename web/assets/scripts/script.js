@@ -562,6 +562,12 @@ async function downloadProcess(paths) {
     }
 }
 
+async function refreshFileTree() {
+    await getFileTree()
+
+    renderSharedFiles();
+}
+
 // call api to fetch all the files list from backend to download
 async function getFileTree() {
     try {
@@ -592,10 +598,10 @@ function formatedSharedFilesInfos() {
 
 // subtract all the folders name and remove file names and return an array
 function getDirList(path) {
-    const pathParts = String(path).replace(/\\/g, "/").split("/").filter(Boolean)
-    pathParts.pop()
+    const pathParts = String(path).replace(/\\/g, "/").split("/").filter(Boolean);
+    pathParts.pop();
 
-    return ["/", ...pathParts]
+    return ["/", ...pathParts];
 }
 
 async function getConfigs() {
